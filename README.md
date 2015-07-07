@@ -5,7 +5,7 @@ The purpose of this app is to showcase various restaurants with happy hour speci
 
 ##Wireframes
 Veiw my wireframes here: <br/>
-https://github.com/mona87/my-final-project/blob/master/final/wireframes/Happy%20Hour!.pdf
+https://github.com/mona87/my-final-project/blob/master/wireframes/Happy%20Hour!.pdf
 
 ##User Stories
 My Trello board: <br/>
