@@ -6,7 +6,7 @@ module.exports = React.createClass({
 		return {
 			enableHighAccuracy: true, 
 		  	maximumAge        : 30000, 
-		  	timeout           : 27000
+		  	// timeout           : 27000
 		}
 	},
 	getInitialState: function(){
@@ -31,6 +31,7 @@ module.exports = React.createClass({
 	render: function(){
 		return(
 			<Restaurant lat={this.state.lat} lng={this.state.lng} />
+
 		);
 		
 	}

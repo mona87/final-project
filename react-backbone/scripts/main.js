@@ -2,11 +2,12 @@ var React = require ('react');
 var Backbone = require('backbone');
 var UserComponent = require('./components/UserComponent');
 var MapComponent = require('./components/MapComponent');
-var LocationComponent = require('./components/LocationComponent')
+var LocationComponent = require('./components/LocationComponent');
+var CarouselComponent = require('./components/CarouselComponent');
 var UserCollection = require('./collections/UserCollection');
 var users = new UserCollection();
-
-
+var Carousel = require('react-bootstrap/lib/Carousel');
+var CarouselItem = require('react-bootstrap/lib/CarouselItem');
 
 
 var el = document.getElementById('container');
@@ -14,7 +15,8 @@ var el = document.getElementById('container');
 var App = Backbone.Router.extend({
 	routes:{
 		'':  	'home',
-		'maps': 'maps'
+		'maps': 'maps',
+		'carousel': 'carousel'
 	},
 
 	home: function(){
@@ -29,12 +31,13 @@ var App = Backbone.Router.extend({
 	 	console.log('maps');
 
 	 	React.render(
-	 		<div>
-	 	 	<LocationComponent/>
-	 		</div>,
-	 		el
-	 	
+	 	 	<LocationComponent/>,
+	 		el	 	
 	 	)
+	 },
+	 carousel: function(){
+	 	console.log('carousel');
+		 React.render(<CarouselComponent />, el);
 
 	 }
 });

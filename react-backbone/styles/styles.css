@@ -1,8 +1,40 @@
-.example-enter {
-  opacity: 0.01;
-  transition: opacity .5s ease-in;
+
+.carousel-control.left, .carousel-control.right{
+	background-image: none;
+	height: 100px;
+	top:350px;
+	width: 10%;
 }
 
-.example-enter.example-enter-active {
-  opacity: 1;
+.glyphicon-chevron-left, .glyphicon-chevron-right{
+	color: red;
+}
+
+.imgHolder{
+	width: 100%;
+}
+
+.imgHolder img{
+	height: 200px
+
+}
+
+.textHolder{
+	width: 900px;
+	max-width: 100%;
+	margin: 0 auto;
+	font-size: 2rem;
+	padding: 40px 40px 0px 40px;
+}
+
+.carousel-indicators, .carousel-caption  {
+ display: none;
+}
+.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img{
+	height: 300px;
+		
+}
+
+.logo{
+	height:60px;
 }
