@@ -51,7 +51,7 @@ module.exports = React.createClass({
 				<div className="logo"></div>
 			  <Carousel activeIndex={this.state.index} direction={this.state.direction} onSelect={this.handleSelect}>
 			   <CarouselItem>
-				  <img className="imgHolder" alt='900x500' src='http://www.mannyscocina.com/images/drinks/drinks-quenchers.jpg'/>
+				  <img className="imgHolder" alt='900x500' src='https://img.grouponcdn.com/deal/hHwi69ShuzVgx2F9aEzs/Zd-2048x1229/v1/c700x420.jpg'/>
 				  <div className='carousel-caption'>
 						{/*<h3>Second slide label</h3>
 					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>*/}
@@ -84,7 +84,7 @@ module.exports = React.createClass({
 				  </div>
 				  <div>
 						  {this.props.nearby.map(function(place, i){
-						  	i++
+						  	
 							if(i === self.state.counter){
 							  return(
 							  	<div key={place._id}>

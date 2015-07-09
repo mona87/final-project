@@ -33686,7 +33686,7 @@ module.exports = React.createClass({
 				React.createElement(
 					CarouselItem,
 					null,
-					React.createElement('img', { className: 'imgHolder', alt: '900x500', src: 'http://www.mannyscocina.com/images/drinks/drinks-quenchers.jpg' }),
+					React.createElement('img', { className: 'imgHolder', alt: '900x500', src: 'https://img.grouponcdn.com/deal/hHwi69ShuzVgx2F9aEzs/Zd-2048x1229/v1/c700x420.jpg' }),
 					React.createElement('div', { className: 'carousel-caption' }),
 					React.createElement(
 						'div',
@@ -33745,7 +33745,7 @@ module.exports = React.createClass({
 						'div',
 						null,
 						this.props.nearby.map(function (place, i) {
-							i++;
+
 							if (i === self.state.counter) {
 								return React.createElement(
 									'div',
@@ -33809,7 +33809,8 @@ module.exports = React.createClass({
 	getDefaultProps: function getDefaultProps() {
 		return {
 			enableHighAccuracy: true,
-			maximumAge: 30000
+			maximumAge: 30000,
+			timeout: 27000
 		};
 	},
 	getInitialState: function getInitialState() {
@@ -33836,7 +33837,6 @@ module.exports = React.createClass({
 	}
 
 });
-// timeout           : 27000
 
 },{"./RestaurantComponent":175,"react":168}],174:[function(require,module,exports){
 'use strict';

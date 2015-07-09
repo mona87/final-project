@@ -6,7 +6,7 @@ module.exports = React.createClass({
 		return {
 			enableHighAccuracy: true, 
 		  	maximumAge        : 30000, 
-		  	// timeout           : 27000
+		  	timeout           : 27000
 		}
 	},
 	getInitialState: function(){
