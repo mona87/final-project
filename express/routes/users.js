@@ -1,4 +1,4 @@
-var User = require('../models/user').User;
+var User = require('../models/user');
 
 
 exports.index = function(req, res) {
@@ -13,8 +13,8 @@ exports.index = function(req, res) {
 
 exports.create = function(req, res) {
 
-  var name = req.body.name; // Name of user. 
-  var age = req.body.age;  // user age
+  var name = req.body.username; // Name of user. 
+  var age = req.body.password;  // user age
 
   //User.findOne({ name: name }, function(err, doc) {  // This line is case sensitive.
   User.findOne({ name: { $regex: new RegExp(name, "i") } }, function(err, doc) {  // Using RegEx - search is case insensitive
@@ -29,7 +29,7 @@ exports.create = function(req, res) {
       user.save(function(err) {
 
         if(!err) {
-          res.status(201).json({message: "User created with name: " + user.name });    
+          res.status(201).json({message: "User created with name: " + user.username });    
         } else {
           res.status(500).json({message: "Could not create user. Error: " + err});
         }
@@ -51,24 +51,24 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
   
   var id = req.body.id; 
-  var name = req.body.name;
-  var age = req.body.age; 
+  var username = req.body.username;
+  var password = req.body.password; 
 
   User.findById(id, function(err, doc) {
       if(!err && doc) {
-        doc.name = name; 
-        doc.age = age; 
+        doc.username = username; 
+        doc.password = password; 
         doc.save(function(err) {
           if(!err) {
-            res.json(200, {message: "User updated: " + name});    
+            res.status(200).json({message: "User updated: " + username});    
           } else {
-            res.json(500, {message: "Could not update user. " + err});
+            res.status(500).json( {message: "Could not update user. " + err});
           }  
         });
       } else if(!err) {
-        res.json(404, { message: "Could not find user."});
+        res.status(404).json({ message: "Could not find user."});
       } else {
-        res.json(500, { message: "Could not update user." + err});
+        res.status(500).json({ message: "Could not update user." + err});
       }
     }); 
 }
@@ -101,4 +101,6 @@ exports.show = function(req, res) {
     }
   });
 }
+
+
 
