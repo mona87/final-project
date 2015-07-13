@@ -72,7 +72,7 @@ module.exports = React.createClass ({
 		console.log('nearby ', this.state.nearby)
 		return(
 			<div>
-			<CarouselComponent places={this.state.places} nearby={this.state.nearby} counter={0} haversine={this.haversine}/>
+			<CarouselComponent router={this.props.router} places={this.state.places} nearby={this.state.nearby} counter={0} haversine={this.haversine}/>
 			<div>{/*this.state.places.map(function(place){
   
 					if(self.haversine(place.latitude,place.longitude, self.props.lat, self.props.lng) <= 5 ){

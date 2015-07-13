@@ -8,37 +8,53 @@ var UserCollection = require('./collections/UserCollection');
 var users = new UserCollection();
 var Carousel = require('react-bootstrap/lib/Carousel');
 var CarouselItem = require('react-bootstrap/lib/CarouselItem');
-
+var LoginComponent = require('./components/LoginComponent');
+var User = require('./components/User');
 
 var el = document.getElementById('container');
 
 var App = Backbone.Router.extend({
 	routes:{
 		'':  	'home',
-		'maps': 'maps',
-		'carousel': 'carousel'
+		'maps/:user': 'maps',
+		'test': 'test',
+		'login': 'login'
 	},
 
 	home: function(){
 		console.log('home');
 		React.render(
-				<UserComponent  />,
+				<UserComponent/>,
 				el
 		)
 	
 	},
-	maps: function(){
+	maps: function(user){
 	 	console.log('maps');
 
 	 	React.render(
-	 	 	<LocationComponent/>,
+	 		<div>
+	 		<User/>
+	 	 	<LocationComponent router={myRouter} />
+	 	 	</div>,
 	 		el	 	
 	 	)
 	 },
-	 carousel: function(){
+	 test: function(){
 	 	console.log('carousel');
-		 React.render(<CarouselComponent />, el);
+		 React.render(
+		 	<div>
+		 	<CarouselComponent />
+		 	</div>, el);
 
+	 },
+	 login: function(){
+	 	React.render(
+	 		<div>
+	 		<User/>
+	 		<LoginComponent router={myRouter}/>
+	 		</div>,el
+	 	);
 	 }
 });
 

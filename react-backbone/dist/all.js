@@ -33580,7 +33580,7 @@ module.exports = Backbone.Collection.extend({
 	}
 });
 
-},{"../models/RestaurantModel":178,"backbone":1}],170:[function(require,module,exports){
+},{"../models/RestaurantModel":179,"backbone":1}],170:[function(require,module,exports){
 'use strict';
 
 var Backbone = require('backbone');
@@ -33594,45 +33594,13 @@ module.exports = Backbone.Collection.extend({
 	}
 });
 
-},{"../models/UserModel":179,"backbone":1}],171:[function(require,module,exports){
+},{"../models/UserModel":180,"backbone":1}],171:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
-var CarouselItem = require('react-bootstrap/lib/CarouselItem');
-
-module.exports = React.createClass({
-  displayName: 'exports',
-
-  render: function render() {
-    return React.createElement(
-      CarouselItem,
-      null,
-      React.createElement('img', { width: 900, height: 500, alt: '900x500', src: 'https://placeholdit.imgix.net/~text?txtsize=47&txt=500%C3%97300&w=500&h=300' }),
-      React.createElement(
-        'div',
-        { className: 'carousel-caption' },
-        React.createElement(
-          'h3',
-          null,
-          'Second slide label'
-        ),
-        React.createElement(
-          'p',
-          null,
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-        )
-      )
-    );
-  }
-});
-
-},{"react":168,"react-bootstrap/lib/CarouselItem":7}],172:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
+var $ = require('jquery');
 var Carousel = require('react-bootstrap/lib/Carousel');
 var CarouselItem = require('react-bootstrap/lib/CarouselItem');
-var CIComponent = require('./CIComponent');
 var MapComponent = require('./MapComponent');
 
 module.exports = React.createClass({
@@ -33642,10 +33610,13 @@ module.exports = React.createClass({
 		return {
 			index: 0,
 			direction: null,
-			counter: 0
+			counter: 0,
+			counter2: 0,
+			userId: null,
+			username: null,
+			restaurantId: null
 		};
 	},
-
 	handleSelect: function handleSelect(selectedIndex, selectedDirection) {
 		// alert('selected=' + selectedIndex + ', direction=' + selectedDirection);
 
@@ -33654,6 +33625,7 @@ module.exports = React.createClass({
 		} else if (this.state.counter === this.props.nearby.length - 1 && selectedDirection === 'next') {
 			this.state.counter = 0;
 		} else if (selectedDirection === 'next') {
+
 			this.state.counter++;
 		} else if (selectedDirection === 'prev') {
 			this.state.counter--;
@@ -33664,13 +33636,52 @@ module.exports = React.createClass({
 			direction: selectedDirection
 		});
 	},
+	prev: function prev() {
+		if (this.state.index === 0) {
+			this.state.index = 1;
+			this.handleSelect(this.state.index, 'prev');
+		} else if (this.state.index === 1) {
+			this.state.index = 0;
+			this.handleSelect(this.state.index, 'prev');
+		}
+	},
+	next: function next() {
+		if (this.state.index === 0) {
+			this.state.index = 1;
+			this.handleSelect(this.state.index, 'next');
+		} else if (this.state.index === 1) {
+			this.state.index = 0;
+			this.handleSelect(this.state.index, 'next');
+		}
+	},
 	ComponentDidMount: function ComponentDidMount() {
 		this.setState({
 			counter: 0
 		});
 	},
-
+	add: function add(e) {
+		e.preventDefault();
+		// e.currentTarget.style.display = 'none';
+		console.log('user ', this.state.username);
+		console.log('fav ', this.state.restaurantId);
+		$.ajax({
+			url: 'http://localhost:3000/users',
+			data: { username: this.state.username, id: this.state.userId, favorite: this.state.restaurantId },
+			type: 'PUT',
+			success: function success(result) {
+				console.log(result);
+			},
+			error: function error(err) {
+				console.log(err);
+			}
+		});
+	},
+	update: function update() {
+		this.state.username = localStorage.getItem('username');
+		this.state.userId = localStorage.getItem('id');
+	},
 	render: function render() {
+		this.update();
 		var self = this;
 		var style = {
 			color: 'blue'
@@ -33679,129 +33690,179 @@ module.exports = React.createClass({
 		return React.createElement(
 			'div',
 			null,
-			React.createElement('div', { className: 'logo' }),
 			React.createElement(
-				Carousel,
-				{ activeIndex: this.state.index, direction: this.state.direction, onSelect: this.handleSelect },
+				'div',
+				{ className: 'row row-color' },
 				React.createElement(
-					CarouselItem,
-					null,
-					React.createElement('img', { className: 'imgHolder', alt: '900x500', src: 'https://img.grouponcdn.com/deal/hHwi69ShuzVgx2F9aEzs/Zd-2048x1229/v1/c700x420.jpg' }),
-					React.createElement('div', { className: 'carousel-caption' }),
+					'div',
+					{ className: 'col-sm-12 ' },
 					React.createElement(
-						'div',
-						null,
-						this.props.nearby.map(function (place, i) {
+						Carousel,
+						{ activeIndex: this.state.index, direction: this.state.direction, onSelect: this.handleSelect },
+						React.createElement(
+							CarouselItem,
+							{ className: 'carouselItem ' },
+							React.createElement('div', { className: 'imgHolder', alt: '900x500' }),
+							React.createElement(
+								'div',
+								{ className: 'textWrapper' },
+								this.props.nearby.map(function (place, i) {
 
-							if (i === self.state.counter) {
-								return React.createElement(
-									'div',
-									{ key: place._id },
-									React.createElement(
-										'div',
-										{ className: 'textHolder' },
-										place.restaurant,
-										React.createElement(
+									if (i === self.state.counter) {
+										self.state.restaurantId = place._id;
+										return React.createElement(
 											'div',
-											null,
-											place.details
-										),
-										React.createElement(
-											'div',
-											null,
-											place.numbers
-										),
-										React.createElement(
-											'div',
-											null,
-											place.address
-										),
-										React.createElement(
-											'div',
-											null,
-											place.phone
-										),
-										React.createElement(
-											'div',
-											null,
+											{ className: 'textHolder', key: place._id },
 											React.createElement(
-												'a',
-												{ href: '"' + place.website + '"' },
-												place.website
+												'div',
+												null,
+												React.createElement('i', { onClick: self.add, className: 'fa fa-heart fa-2x' }),
+												React.createElement(
+													'h1',
+													{ className: 'rest-name' },
+													place.restaurant
+												),
+												React.createElement(
+													'div',
+													null,
+													place.details
+												),
+												React.createElement(
+													'div',
+													null,
+													place.numbers
+												),
+												React.createElement(
+													'div',
+													null,
+													place.address
+												),
+												React.createElement(
+													'div',
+													null,
+													place.phone
+												),
+												React.createElement(
+													'div',
+													null,
+													React.createElement(
+														'a',
+														{ href: '"' + place.website + '"' },
+														place.website
+													)
+												)
 											)
-										)
-									)
-								);
-							}
-						})
+										);
+									}
+								})
+							)
+						),
+						React.createElement(
+							CarouselItem,
+							{ className: 'carouselItem ' },
+							React.createElement('div', { className: 'imgHolder2', alt: '900x500' }),
+							React.createElement(
+								'div',
+								{ className: 'textWrapper' },
+								this.props.nearby.map(function (place, i) {
+
+									if (i === self.state.counter) {
+										return React.createElement(
+											'div',
+											{ className: 'textHolder', key: place._id },
+											React.createElement(
+												'div',
+												null,
+												React.createElement(
+													'h1',
+													{ className: 'rest-name' },
+													place.restaurant
+												),
+												React.createElement(
+													'div',
+													null,
+													place.details
+												),
+												React.createElement(
+													'div',
+													null,
+													place.numbers
+												),
+												React.createElement(
+													'div',
+													null,
+													place.address
+												),
+												React.createElement(
+													'div',
+													null,
+													place.phone
+												),
+												React.createElement(
+													'div',
+													null,
+													React.createElement(
+														'a',
+														{ href: '"' + place.website + '"' },
+														place.website
+													)
+												)
+											)
+										);
+									}
+								})
+							)
+						)
 					)
+				)
+			),
+			React.createElement(
+				'div',
+				{ className: 'row icon-row' },
+				React.createElement(
+					'div',
+					{ onClick: this.prev, className: 'col-sm-2 mob-btn ' },
+					React.createElement('i', { className: 'fa fa-hand-o-left fa-3x' })
 				),
 				React.createElement(
-					CarouselItem,
-					null,
-					React.createElement('img', { className: 'imgHolder', width: 900, height: 200, alt: '900x500', src: 'https://img.grouponcdn.com/deal/hHwi69ShuzVgx2F9aEzs/Zd-2048x1229/v1/c700x420.jpg' }),
-					React.createElement('div', { className: 'carousel-caption' }),
-					React.createElement(
-						'div',
-						null,
-						this.props.nearby.map(function (place, i) {
-
-							if (i === self.state.counter) {
-								return React.createElement(
-									'div',
-									{ key: place._id },
-									React.createElement(
-										'div',
-										{ className: 'textHolder' },
-										place.restaurant,
-										React.createElement(
-											'div',
-											null,
-											place.details
-										),
-										React.createElement(
-											'div',
-											null,
-											place.numbers
-										),
-										React.createElement(
-											'div',
-											null,
-											place.address
-										),
-										React.createElement(
-											'div',
-											null,
-											place.phone
-										),
-										React.createElement(
-											'div',
-											null,
-											React.createElement(
-												'a',
-												{ href: '"' + place.website + '"' },
-												place.website
-											)
-										)
-									)
-								);
-							}
-						})
-					)
+					'div',
+					{ className: 'col-sm-2 mob-btn ' },
+					React.createElement('i', { className: 'fa fa-glass fa-3x' })
+				),
+				React.createElement(
+					'div',
+					{ className: 'col-sm-2 mob-btn ' },
+					React.createElement('i', { className: 'fa fa-street-view fa-3x' })
+				),
+				React.createElement(
+					'div',
+					{ className: 'col-sm-2 mob-btn ' },
+					React.createElement('i', { className: 'fa fa-list-alt fa-3x' })
+				),
+				React.createElement(
+					'div',
+					{ onClick: this.next, className: 'col-sm-2 mob-btn ' },
+					React.createElement('i', { className: 'fa fa-hand-o-right fa-3x ' })
 				)
 			)
 		);
 	}
 });
-/*<h3>Second slide label</h3>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>*/ /*<h3>Second slide label</h3>
-                                                                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>*/
+// self.fetchData();
 
-},{"./CIComponent":171,"./MapComponent":174,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],173:[function(require,module,exports){
+},{"./MapComponent":174,"jquery":4,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],172:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
 var Restaurant = require('./RestaurantComponent');
+
+// var store = localStorage.getItem('username')
+// console.log('store ', localStorage.getItem('username'))
+// if(store !== 'mona'){
+
+// 	window.location.href = '/#login';
+// }
+// else{
 
 module.exports = React.createClass({
 	displayName: 'exports',
@@ -33809,8 +33870,7 @@ module.exports = React.createClass({
 	getDefaultProps: function getDefaultProps() {
 		return {
 			enableHighAccuracy: true,
-			maximumAge: 30000,
-			timeout: 27000
+			maximumAge: 30000
 		};
 	},
 	getInitialState: function getInitialState() {
@@ -33820,6 +33880,11 @@ module.exports = React.createClass({
 		};
 	},
 	componentWillMount: function componentWillMount() {
+
+		// if(store !== 'mona'){
+
+		// 	this.props.router.navigate('/login', {trigger:true});
+		// }
 		var wpid = navigator.geolocation.watchPosition(this.geoSuccess, this.geoError, this.props);
 	},
 	geoSuccess: function geoSuccess(position) {
@@ -33837,8 +33902,84 @@ module.exports = React.createClass({
 	}
 
 });
+// timeout           : 27000
 
-},{"./RestaurantComponent":175,"react":168}],174:[function(require,module,exports){
+},{"./RestaurantComponent":175,"react":168}],173:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var $ = require('jquery');
+var Backbone = require('backbone');
+
+module.exports = React.createClass({
+	displayName: 'exports',
+
+	render: function render() {
+		return React.createElement(
+			'div',
+			{ className: 'row' },
+			React.createElement(
+				'div',
+				{ className: 'col-sm-12' },
+				React.createElement(
+					'h1',
+					null,
+					'Login'
+				),
+				React.createElement(
+					'form',
+					{ onSubmit: this.login },
+					React.createElement(
+						'label',
+						null,
+						'Username'
+					),
+					React.createElement('br', null),
+					React.createElement('input', { ref: 'username', type: 'text' }),
+					React.createElement('br', null),
+					React.createElement(
+						'label',
+						null,
+						'Password'
+					),
+					React.createElement('br', null),
+					React.createElement('input', { ref: 'pass', type: 'password' }),
+					React.createElement('br', null),
+					React.createElement(
+						'button',
+						null,
+						'Login'
+					)
+				)
+			)
+		);
+	},
+	login: function login(e) {
+		e.preventDefault();
+		self = this;
+		var username = this.refs.username.getDOMNode().value;
+		var password = this.refs.pass.getDOMNode().value;
+		console.log('click');
+		$.ajax({
+			url: 'http://localhost:3000/login',
+			data: { username: username, password: password },
+			type: 'POST',
+			success: function success(result) {
+				console.log(result);
+				// self.fetchData();
+				localStorage.setItem('username', result.username);
+				localStorage.setItem('id', result.id);
+				console.log(result.username);
+				self.props.router.navigate('/maps/' + result.username, { trigger: true });
+			},
+			error: function error(err) {
+				console.log(err);
+			}
+		});
+	}
+});
+
+},{"backbone":1,"jquery":4,"react":168}],174:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -33967,7 +34108,7 @@ module.exports = React.createClass({
 		return React.createElement(
 			'div',
 			null,
-			React.createElement(CarouselComponent, { places: this.state.places, nearby: this.state.nearby, counter: 0, haversine: this.haversine }),
+			React.createElement(CarouselComponent, { router: this.props.router, places: this.state.places, nearby: this.state.nearby, counter: 0, haversine: this.haversine }),
 			React.createElement('div', null)
 		);
 	},
@@ -34011,7 +34152,81 @@ return(
 }
 })*/
 
-},{"../collections/RestaurantCollection":169,"../components/CarouselComponent":172,"./MapComponent":174,"backbone":1,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],176:[function(require,module,exports){
+},{"../collections/RestaurantCollection":169,"../components/CarouselComponent":171,"./MapComponent":174,"backbone":1,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],176:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var $ = require('jquery');
+var CarouselComponent = require('./CarouselComponent');
+
+// var store = localStorage.getItem('username')
+// console.log('store ', localStorage.getItem('username'))
+// if(store !== 'mona'){
+
+// 	window.location.href = '/#login';
+// }
+// else{
+
+module.exports = React.createClass({
+	displayName: 'exports',
+
+	getInitialState: function getInitialState() {
+		// console.log(localStorage.getItem('username'));
+		return {
+			username: null,
+			id: null
+		};
+	},
+	render: function render() {
+		this.update();
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'div',
+				{ className: 'row' },
+				React.createElement(
+					'div',
+					{ className: 'col-sm-12 header' },
+					React.createElement(
+						'h1',
+						null,
+						'Happy Hour'
+					),
+					React.createElement(
+						'span',
+						{ className: 'user', onClick: this.slide, className: 'user' },
+						'Welcome ',
+						this.state.username,
+						'!'
+					)
+				),
+				React.createElement(
+					'div',
+					{ className: 'row' },
+					React.createElement(
+						'div',
+						{ className: 'col-sm-12' },
+						React.createElement('div', { ref: 'slider', className: 'slider' })
+					)
+				)
+			)
+		);
+	},
+	componentDidMount: function componentDidMount() {},
+	update: function update() {
+		this.state.username = localStorage.getItem('username');
+		this.state.id = localStorage.getItem('id');
+	},
+	slide: function slide(e) {
+		e.preventDefault();
+		console.log(this.getDOMNode());
+		$(this.refs.slider.getDOMNode()).slideToggle('fast');
+	}
+
+});
+
+},{"./CarouselComponent":171,"jquery":4,"react":168}],177:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -34045,17 +34260,19 @@ module.exports = React.createClass({
 		var style = {
 			marginRight: '5px'
 		};
-
+		var style2 = {
+			paddingLeft: '20px'
+		};
 		return React.createElement(
 			'div',
-			null,
+			{ style: style2 },
 			React.createElement(
 				'form',
 				null,
 				React.createElement(
 					'h1',
 					null,
-					'Add User'
+					'User'
 				),
 				React.createElement(
 					'label',
@@ -34068,7 +34285,7 @@ module.exports = React.createClass({
 				React.createElement(
 					'label',
 					null,
-					'Age'
+					'Password'
 				),
 				React.createElement('br', null),
 				React.createElement('input', { ref: 'age', type: 'text' }),
@@ -34080,6 +34297,7 @@ module.exports = React.createClass({
 				),
 				React.createElement('br', null),
 				React.createElement('input', { ref: 'modelId', type: 'text' }),
+				React.createElement('br', null),
 				React.createElement('br', null),
 				React.createElement(
 					'button',
@@ -34100,6 +34318,16 @@ module.exports = React.createClass({
 					'button',
 					{ style: style, onClick: this.search },
 					'Find'
+				),
+				React.createElement(
+					'button',
+					{ style: style, onClick: this.login },
+					'Login'
+				),
+				React.createElement(
+					'button',
+					{ style: style, onClick: this.logout },
+					'Logout'
 				)
 			),
 			React.createElement(
@@ -34113,7 +34341,11 @@ module.exports = React.createClass({
 				this.state.user.name,
 				React.createElement('br', null),
 				React.createElement('br', null),
-				this.state.user.age
+				this.state.user.age,
+				this.state.user.username,
+				React.createElement('br', null),
+				React.createElement('br', null),
+				this.state.user.password
 			),
 			React.createElement(
 				'h2',
@@ -34127,6 +34359,16 @@ module.exports = React.createClass({
 					return React.createElement(
 						'div',
 						{ key: user.attributes._id },
+						React.createElement(
+							'h2',
+							null,
+							user.attributes.username
+						),
+						React.createElement(
+							'h3',
+							null,
+							user.attributes.password
+						),
 						React.createElement(
 							'h2',
 							null,
@@ -34147,12 +34389,50 @@ module.exports = React.createClass({
 			)
 		);
 	},
+	login: function login(e) {
+		e.preventDefault();
+		self = this;
+		var name = this.refs.name.getDOMNode().value;
+		var pass = this.refs.age.getDOMNode().value;
+		console.log('click');
+		$.ajax({
+			url: 'http://localhost:3000/login',
+			data: { username: name, password: pass },
+			type: 'POST',
+			success: function success(result) {
+				console.log(result);
+				// self.fetchData();
+			},
+			error: function error(err) {
+				console.log(err);
+			}
+		});
+	},
+	logout: function logout(e) {
+		e.preventDefault();
+		self = this;
+		var name = this.refs.name.getDOMNode().value;
+		var pass = this.refs.age.getDOMNode().value;
+		console.log('click');
+		$.ajax({
+			url: 'http://localhost:3000/logout',
+			data: {},
+			type: 'GET',
+			success: function success(result) {
+				console.log(result);
+				// self.fetchData();
+			},
+			error: function error(err) {
+				console.log(err);
+			}
+		});
+	},
 	post: function post(e) {
 		e.preventDefault();
 		self = this;
 		var user = new UserModel({
-			name: this.refs.name.getDOMNode().value,
-			age: this.refs.age.getDOMNode().value
+			username: this.refs.name.getDOMNode().value,
+			password: this.refs.age.getDOMNode().value
 		});
 		user.save().done(function (data) {
 			// console.log('saved')
@@ -34186,11 +34466,11 @@ module.exports = React.createClass({
 		self = this;
 		var name = this.refs.name.getDOMNode().value;
 		var id = this.refs.modelId.getDOMNode().value;
-		var age = this.refs.age.getDOMNode().value;
+		var pass = this.refs.age.getDOMNode().value;
 
 		$.ajax({
 			url: 'http://localhost:3000/users',
-			data: { id: id, name: name, age: age },
+			data: { id: id, username: name, password: pass },
 			type: 'PUT',
 			success: function success(result) {
 				console.log(result);
@@ -34225,7 +34505,7 @@ module.exports = React.createClass({
 
 });
 
-},{"../collections/UserCollection":170,"../models/UserModel":179,"backbone":1,"jquery":4,"react":168}],177:[function(require,module,exports){
+},{"../collections/UserCollection":170,"../models/UserModel":180,"backbone":1,"jquery":4,"react":168}],178:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -34238,35 +34518,55 @@ var UserCollection = require('./collections/UserCollection');
 var users = new UserCollection();
 var Carousel = require('react-bootstrap/lib/Carousel');
 var CarouselItem = require('react-bootstrap/lib/CarouselItem');
+var LoginComponent = require('./components/LoginComponent');
+var User = require('./components/User');
 
 var el = document.getElementById('container');
 
 var App = Backbone.Router.extend({
 	routes: {
 		'': 'home',
-		'maps': 'maps',
-		'carousel': 'carousel'
+		'maps/:user': 'maps',
+		'test': 'test',
+		'login': 'login'
 	},
 
 	home: function home() {
 		console.log('home');
 		React.render(React.createElement(UserComponent, null), el);
 	},
-	maps: function maps() {
+	maps: function maps(user) {
 		console.log('maps');
 
-		React.render(React.createElement(LocationComponent, null), el);
+		React.render(React.createElement(
+			'div',
+			null,
+			React.createElement(User, null),
+			React.createElement(LocationComponent, { router: myRouter })
+		), el);
 	},
-	carousel: function carousel() {
+	test: function test() {
 		console.log('carousel');
-		React.render(React.createElement(CarouselComponent, null), el);
+		React.render(React.createElement(
+			'div',
+			null,
+			React.createElement(CarouselComponent, null)
+		), el);
+	},
+	login: function login() {
+		React.render(React.createElement(
+			'div',
+			null,
+			React.createElement(User, null),
+			React.createElement(LoginComponent, { router: myRouter })
+		), el);
 	}
 });
 
 var myRouter = new App();
 Backbone.history.start();
 
-},{"./collections/UserCollection":170,"./components/CarouselComponent":172,"./components/LocationComponent":173,"./components/MapComponent":174,"./components/UserComponent":176,"backbone":1,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],178:[function(require,module,exports){
+},{"./collections/UserCollection":170,"./components/CarouselComponent":171,"./components/LocationComponent":172,"./components/LoginComponent":173,"./components/MapComponent":174,"./components/User":176,"./components/UserComponent":177,"backbone":1,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],179:[function(require,module,exports){
 'use strict';
 
 var Backbone = require('backbone');
@@ -34287,7 +34587,7 @@ module.exports = Backbone.Model.extend({
 	idAttribute: '_id'
 });
 
-},{"backbone":1}],179:[function(require,module,exports){
+},{"backbone":1}],180:[function(require,module,exports){
 'use strict';
 
 var Backbone = require('backbone');
@@ -34302,7 +34602,7 @@ module.exports = Backbone.Model.extend({
 	idAttribtue: '_id'
 });
 
-},{"backbone":1}]},{},[177])
+},{"backbone":1}]},{},[178])
 
 
 //# sourceMappingURL=all.js.map

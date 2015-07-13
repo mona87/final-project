@@ -53,11 +53,14 @@ exports.update = function(req, res) {
   var id = req.body.id; 
   var username = req.body.username;
   var password = req.body.password; 
+  var favorite = req.body.favorite;
 
   User.findById(id, function(err, doc) {
       if(!err && doc) {
         doc.username = username; 
         doc.password = password; 
+         doc.favorite.pop();
+        // doc.favorite.push(favorite);
         doc.save(function(err) {
           if(!err) {
             res.status(200).json({message: "User updated: " + username});    

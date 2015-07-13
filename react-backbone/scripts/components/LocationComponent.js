@@ -1,12 +1,22 @@
 var React = require('react');
 var Restaurant = require('./RestaurantComponent');
 
+
+// var store = localStorage.getItem('username')
+// console.log('store ', localStorage.getItem('username'))
+// if(store !== 'mona'){
+	
+// 	window.location.href = '/#login';
+// }
+// else{
+
+
 module.exports = React.createClass({
 	getDefaultProps: function(){
 		return {
 			enableHighAccuracy: true, 
 		  	maximumAge        : 30000, 
-		  	timeout           : 27000
+		  	// timeout           : 27000
 		}
 	},
 	getInitialState: function(){
@@ -16,6 +26,11 @@ module.exports = React.createClass({
 		}
 	},
 	componentWillMount: function(){
+
+		// if(store !== 'mona'){
+	
+		// 	this.props.router.navigate('/login', {trigger:true});
+		// }
 		var wpid = navigator.geolocation.watchPosition(this.geoSuccess, this.geoError, this.props);
 	},
 	geoSuccess: function(position){
@@ -37,3 +52,4 @@ module.exports = React.createClass({
 	}
 
 })
+
