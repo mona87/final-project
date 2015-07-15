@@ -9,6 +9,7 @@ var CarouselItem = require('react-bootstrap/lib/CarouselItem');
 
 
 
+
 module.exports = React.createClass ({
 	getInitialState: function(){
 		
@@ -68,43 +69,12 @@ module.exports = React.createClass ({
 			// console.log('dis ' +this.haversine(30.26654,-97.738194, this.state.lat, this.state.lng));
 		this.nearbyPlaces();
 		// console.log(Boolean(this.state.nearby))
-		console.log('places ', this.state.places)
-		console.log('nearby ', this.state.nearby)
+		// console.log('places ', this.state.places)
+		// console.log('nearby ', this.state.nearby)
+		console.log(this.props)
 		return(
 			<div>
-			<CarouselComponent router={this.props.router} places={this.state.places} nearby={this.state.nearby} counter={0} haversine={this.haversine}/>
-			<div>{/*this.state.places.map(function(place){
-  
-					if(self.haversine(place.latitude,place.longitude, self.props.lat, self.props.lng) <= 5 ){
-
-			 			return(
-			 				   
-			 					<div key={place._id}>
-			 					 
-								<div>{place.restaurant}</div>
-								<div>{place.address}</div>
-								<div> {'distance ' +self.haversine(place.latitude,place.longitude, self.props.lat, self.props.lng) + ' miles'}</div>
-								<div style={style}>This restaurant is less than 5 miles away</div>
-								<p></p>
-
-								</div>
-								
-			 				)
-			 		}
-			 		else{
-						return(
-							<div key={place._id}>
-							<div>{place.restaurant}</div>
-							<div>{place.address}</div>
-							<div> {'distance ' +self.haversine(place.latitude,place.longitude, self.props.lat, self.props.lng) + ' miles'}</div>
-							<p></p>
-							</div>
-						);
-				}
-
-			})*/}</div>
-
-
+				<CarouselComponent lat={this.props.lat} lng={this.props.lng}  router={this.props.router} places={this.state.places} nearby={this.state.nearby} counter={0} haversine={this.haversine}/>
 			</div>
 		)
 	},
@@ -121,9 +91,6 @@ module.exports = React.createClass ({
 				})
 			}
 		})
-
-		
-
 	}
 
 })

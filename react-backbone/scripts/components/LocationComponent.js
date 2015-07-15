@@ -45,7 +45,7 @@ module.exports = React.createClass({
 	},
 	render: function(){
 		return(
-			<Restaurant lat={this.state.lat} lng={this.state.lng} />
+			<Restaurant router={this.props.router} lat={this.state.lat} lng={this.state.lng} />
 
 		);
 		

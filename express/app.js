@@ -77,7 +77,7 @@ app.delete('/users',users.delete);
 app.put('/users',users.update);
 app.get('/users/:id', users.show);
 app.get('/happyhours', happyhours.index);
-
+app.put('/happyhours', happyhours.update);
 app.post('/users', function(req, res) {
 
     User.register(new User({ username : req.body.username }), req.body.password, function(err, user) {
@@ -117,12 +117,12 @@ app.get('/logout', function(req, res) {
    res.json({success: true});
 });
 
-app.get('/me', function(req, res) {
-   console.log('/me', req.session);
-   req.session.teest2 = 'hello';
-   res.json({user: req.user});
-   // console.log(req.user)
-});
+// app.get('/me', function(req, res) {
+//    console.log('/me', req.session);
+//    req.session.teest2 = 'hello';
+//    res.json({user: req.user});
+//    // console.log(req.user)
+// });
 
 
 // catch 404 and forward to error handler

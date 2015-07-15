@@ -35,7 +35,7 @@ module.exports = React.createClass({
 		        localStorage.setItem('username', result.username);
 		        localStorage.setItem('id', result.id);
 		         console.log(result.username)
-		        self.props.router.navigate('/maps/'+result.username, {trigger: true});
+		        self.props.router.navigate('/user/'+result.username, {trigger: true});
 		    },
 		    error: function(err){
 		    	console.log(err);

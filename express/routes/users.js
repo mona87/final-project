@@ -59,10 +59,33 @@ exports.update = function(req, res) {
       if(!err && doc) {
         doc.username = username; 
         doc.password = password; 
-         doc.favorite.pop();
-        // doc.favorite.push(favorite);
+        // doc.favorite.pop();
+        var bool = true;
+        if(doc.favorite.length === 0){
+           doc.favorite.push(favorite);
+        }
+        else{
+          for(var i = 0; i <doc.favorite.length; i++){
+            console.log(doc.favorite[i])
+            if(doc.favorite[i] === favorite){
+              console.log(favorite);
+                //only add the name if it doesn't exist
+                //doc.users.push(favorite);     
+                bool = false;  
+            }
+          }
+        } 
+      
+      console.log(bool)
+      if(bool){
+        doc.favorite.push(favorite);
+      }
+
         doc.save(function(err) {
-          if(!err) {
+          if(!bool){
+              res.status(500).json({message: 'Restaurant already on favorite list'})
+            }
+          else if(!err) {
             res.status(200).json({message: "User updated: " + username});    
           } else {
             res.status(500).json( {message: "Could not update user. " + err});

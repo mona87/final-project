@@ -9,16 +9,19 @@ var users = new UserCollection();
 var Carousel = require('react-bootstrap/lib/Carousel');
 var CarouselItem = require('react-bootstrap/lib/CarouselItem');
 var LoginComponent = require('./components/LoginComponent');
+var FavList = require('./components/FavListComponent')
 var User = require('./components/User');
+var MapCarousel = require('./components/MapCarousel');
 
 var el = document.getElementById('container');
 
 var App = Backbone.Router.extend({
 	routes:{
 		'':  	'home',
-		'maps/:user': 'maps',
-		'test': 'test',
-		'login': 'login'
+		'user/:user': 'user',
+		'fav': 'fav',
+		'login': 'login',
+		'maps': 'maps'
 	},
 
 	home: function(){
@@ -29,9 +32,7 @@ var App = Backbone.Router.extend({
 		)
 	
 	},
-	maps: function(user){
-	 	console.log('maps');
-
+	user: function(user){
 	 	React.render(
 	 		<div>
 	 		<User/>
@@ -40,11 +41,12 @@ var App = Backbone.Router.extend({
 	 		el	 	
 	 	)
 	 },
-	 test: function(){
-	 	console.log('carousel');
+	 fav: function(){
+	 	console.log('favorite');
 		 React.render(
 		 	<div>
-		 	<CarouselComponent />
+		 	<User/>
+		 	<FavList router={myRouter}/>
 		 	</div>, el);
 
 	 },
@@ -55,6 +57,15 @@ var App = Backbone.Router.extend({
 	 		<LoginComponent router={myRouter}/>
 	 		</div>,el
 	 	);
+	 },
+	 maps: function(){
+	 	console.log('map')
+	 	React.render(
+	 		<div>
+	 			<User/>
+	 			<MapCarousel router={myRouter}/>
+	 		</div>, el
+	 	)
 	 }
 });
 
