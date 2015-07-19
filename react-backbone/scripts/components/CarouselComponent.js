@@ -16,89 +16,87 @@ module.exports = React.createClass({
 			  username: null,
 			  restaurantId: null,
 			  currentIcon: null,
+			  currentIcon2: null,
 			  favArray: [],
 			  iconArray: [],
 			  lat: null,
 			  lng: null,
 			  mapStyle: 'mapStyle',
-			  visible: null
+			  visible: null,
+			  map: null,
+			  markers: null,
+			  imgArray: ['mini-image','mini-image2','mini-image3', 'mini-image4', 'mini-image5', 'mini-image6', 'mini-image7', 'mini-image8', 'mini-image9', 'mini-image10'],
+			  bigImgArray: ['imgHolder','imgHolder2','imgHolder3', 'imgHolder4', 'imgHolder5', 'imgHolder6', 'imgHolder7', 'imgHolder8', 'imgHolder9', 'mimgHolder10']
 			};
 		  },
 		  handleSelect: function(selectedIndex, selectedDirection) {
-		  	
-		  	  	console.log(this.state.lat);
-				console.log(this.state.lng);
-			  if(this.state.counter === 0 && selectedDirection === 'prev'){      
-				 this.state.counter = this.props.nearby.length-1;
-			  }		
-			  else if(this.state.counter === this.props.nearby.length-1 &&  selectedDirection === 'next'){	  		
-			  		 	this.state.counter = 0;
-			  }
-			  else if(selectedDirection === 'next' )
-			  	{
-			  
-			  		this.state.counter++;		
-			  	}
-			  	else if(selectedDirection === 'prev'){		
-			  		this.state.counter--;
-			  	}
-				console.log('counter ',this.state.counter )
-				console.log('index',this.state.index )	   
+		  	var self = this;
+		  	if(this.state.counter === 0 && selectedDirection === 'prev'){      
+				this.state.counter = this.props.nearby.length-1;
+			}		
+			else if(this.state.counter === this.props.nearby.length-1 &&  selectedDirection === 'next'){	  		
+			  	this.state.counter = 0;
+			}
+			else if(selectedDirection === 'next')
+			{	
+				// if(this.onSlideEnd){
+					 self.state.counter++;
+					
+				// }
+				// console.log(this.onSlideEnd);
+				// this.slideEnd(selectedIndex, selectedDirection)
+			  	  		
+			}
+			else if(selectedDirection === 'prev'){		
+			  	this.state.counter--;
+			}	
+				// 
+				// console.log('counter ',this.state.counter )
+				// console.log('index',this.state.index )	   
 				this.setState({
 				  index: selectedIndex,
 				  direction: selectedDirection
 				});
+
+				// this.slideEnd(selectedIndex, selectedDirection)
 		  },
 		  prev: function(){
+
 		  	if (this.state.index === 0 ){
-		  		this.state.index = 1
+		  		this.state.index = 1;
 		  		this.handleSelect(this.state.index, 'prev');
 		  	}else if(this.state.index === 1 ){
-		  		this.state.index = 0
+		  		this.state.index = 0;
 		  		this.handleSelect(this.state.index, 'prev');
 		  	}
 		  	
 		  },
 		  next: function(){
+
+
 		  	if (this.state.index === 0 ){
+		  		
 		  		this.state.index = 1
 		  		this.handleSelect(this.state.index, 'next');
 		  	}else if(this.state.index === 1 ){
-		  		this.state.index = 0
+		  		this.state.index = 0;
 		  		this.handleSelect(this.state.index, 'next');
 		  	}
 		  		
 		  	
 		  },
 		  componentDidUpdate: function(){
-		  	 this.initialize();
-		  	// google.maps.event.addDomListener(window, 'load', this.initialize);	
+		 	 // this.initialize();  
+		  	google.maps.event.addDomListener(window, 'load', this.initialize());	
 		  	this.state.username = localStorage.getItem('username');
 			this.state.userId = localStorage.getItem('id');
 			this.state.mapId = this.state.mapId; 
-			// console.log(this.state.favArray)
-			var heart = this.state.currentIcon;
-				// console.log('heart ', heart)
-			$.ajax({
-					url: 'http://localhost:3000/users/' + this.state.userId,
-					type: 'GET',
-					success: function(result){
-						console.log(result.favorite)
-
-						for(var i = 0; i < result.favorite.length; i++){		  	
-				  			if((result.favorite[i]+ 'heart') === heart){
-				  			 document.getElementById(heart).style.display='block';
-			  				}
-		  				}	
-					},
-					error: function(err){
-						console.log(err);
-					}
-			})
 		  },
-		  componentDidMount: function(){
-			
-					
+		  slideEnd: function(selectedIndex, selectedDirection){
+		  		console.log('animation done');
+		  		// this.initialize();
+		  		 this.marker();	
+						
 		  },
 		  initialize: function() {
 
@@ -130,6 +128,7 @@ module.exports = React.createClass({
 				  var styledMap = new google.maps.StyledMapType(styles,
 		    			{name: "Styled Map"});
 				  var myLatlng = new google.maps.LatLng(this.state.lat,this.state.lng);
+
 				  var mapOptions = {
 				    zoom: 13,
 				    center: myLatlng,
@@ -138,31 +137,32 @@ module.exports = React.createClass({
 		    		},
 
 				  }
-				  var mapOptions2 = {
-				    zoom: 13,
-				    center: myLatlng,
-				    mapTypeControlOptions: {
-		     	    mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-		    		},
-
-				  }
 	
-				   var map = new google.maps.Map(document.querySelector('.map-canvas'), mapOptions);
-				  	var map2 = new google.maps.Map(document.querySelector('.map-canvas2'), mapOptions);
+				   var map = new google.maps.Map(document.querySelector(".map-canvas"), mapOptions);
+				  
+				  	var map2 = new google.maps.Map(document.querySelector(".map-canvas2"), mapOptions);
+
+				  	if(this.state.index === 0){
+				  		 this.state.map = map;
+				  	}
+				  	else{
+				  		 this.state.map = map2;
+				  	}
 
 				  var image = 'http://tbs-va.com/wp-content/uploads/2013/05/Manhattan-Perfect-cocktail.png'
-				  var marker = new google.maps.Marker({
-				      position: myLatlng,
-				      map: map,
-				      title: 'Hello World!',
+				  // var marker = new google.maps.Marker({
+				  //     position: myLatlng,
+				  //     map: map
 				     
-				  });
-				  var marker2 = new google.maps.Marker({
-				      position: myLatlng,
-				      map: map2,
-				      title: 'Hello World!',
 				     
-				  });
+				  // });
+					this.marker();
+				  // var marker2 = new google.maps.Marker({
+				  //     position: myLatlng,
+				  //     map: map2
+				    
+				     
+				  // });
 					
 					map.mapTypes.set('map_style', styledMap);
 		  			map.setMapTypeId('map_style');
@@ -170,37 +170,87 @@ module.exports = React.createClass({
 		  			map2.setMapTypeId('map_style');
 
 		  },
+		  showFav: function(){
+		  		// if($(this.refs.list.getDOMNode()).css('display') ==='block'){
+		  		// 	$(this.refs.list.getDOMNode()).css('display','none');
+		  		var self = this;
+		  		// }else{
+		  		// 		$(this.refs.list.getDOMNode()).css('display','block');
+		  		// }
+		  		if($(this.refs.carousel.getDOMNode()).css('display') === 'none'){
+						
+						// $(this.refs.list.getDOMNode()).css('display','none');
+						$(self.refs.list.getDOMNode()).fadeOut('fast', function(){
+								$(self.refs.carousel.getDOMNode()).fadeToggle('fast');
+						})
+					
+						console.log('true');
+				}
+				else{
+
+
+		  		$(this.refs.carousel.getDOMNode()).fadeToggle('fast', function(){
+		  				$(self.refs.list.getDOMNode()).slideToggle('slow', function(){
+		  				$('.img1').show();
+		  				$('.mapStyle').hide();
+		  				});
+		  		});
+		  	}
+		  		
+		  		
+
+		  },
+		  marker: function(){
+
+		  			if(this.state.markers !== null){
+		  				this.state.markers.setMap(null);
+		  			}
+		  		
+		  		  var myLatlng = new google.maps.LatLng(this.state.lat,this.state.lng);
+		  		  // console.log(myLatlng);
+		  		  // console.log(this.state.lat, this.state.lng);
+
+		  		  var marker = new google.maps.Marker({
+				      position: myLatlng,
+				      map: this.state.map
+				     	     
+				  });
+				  
+				  this.state.map.setCenter(myLatlng);
+				  this.state.markers = marker;
+				  // console.log('lat ',this.state.lat, 'lng ', this.state.lng)
+
+		  },
 		  map: function(e){
-		  		e.preventDefault();	  		 
-		  		  $('.img1').hide();
-		  		   $('.mapStyle').show();
-		  		    this.initialize();
+		  		e.preventDefault();	
+		  		var self = this; 
+		  		if($('.mapStyle').css('display') === 'none'){ 	
+		  			
+		  			$('.img1').fadeToggle('fast', function(){
+		  				 $('.mapStyle').fadeIn('fast');
+		  				 self.initialize();
+		  			});
+		  			
+		  		}
+		  		else{
+
+		  			 $('.mapStyle').fadeToggle('fast', function(){
+		  		  	 $('.img1').fadeIn('fast');
+		  		  });
+		  			 
+		  		  
+		  		}	 
+		  		 
+		  		  // $('.mapStyle').show();
+		  		  //  console.log('lat ', this.state.lat);
+		  		  //   console.log('lng ', this.state.lng);
+
+		  		    
 		  		    
 		  },
 		  list: function(){
 		  		$('.img1').show();
-		  		   $('.mapStyle').hide();
-		  },
-		  add: function(e){
-		  		e.preventDefault();
-		  		// e.currentTarget.style.display = 'none';
-		  		 console.log('user ', this.state.username);
-		  		  console.log('fav ', this.state.restaurantId);
-		  		    console.log('currentIcon ', this.state.currentIcon);
-		  		    var heart = this.state.currentIcon;
-		  		     document.getElementById(heart).style.display='block';
-		  		 $.ajax({
-					url: 'http://localhost:3000/users',
-					data: {username: this.state.username, id:this.state.userId , favorite: this.state.restaurantId},
-					type: 'PUT',
-					success: function(result){
-						console.log(result)
-						// self.fetchData();
-					},
-					error: function(err){
-						console.log(err);
-					}
-				})
+		  		$('.mapStyle').hide();
 		  },
 		  render: function() {
 		  	
@@ -217,39 +267,39 @@ module.exports = React.createClass({
 				margin: '0',
 				padding: '0'
 			}
-			console.log(this.props)
+			var counter = 0;
+			console.log('props ',this.props.nearby)
 			return (
 				<div>
-			<div className="row row-color">
+			<div ref='carousel' className="row row-color">
 				<div className="col-sm-12 ">
 				
-				  <Carousel activeIndex={this.state.index} direction={this.state.direction} onSelect={this.handleSelect}>
+				  <Carousel  className='carouselMain' onSlideEnd={this.slideEnd}  activeIndex={this.state.index} direction={this.state.direction} >
 				   <CarouselItem className="carouselItem ">				  
-				    <div className="imgHolder img1"></div>
-					 <div id="mapHolder" className={this.state.mapStyle}><div style = {style} className="map-canvas"></div></div>
+				   <div className="imgHolder img1"></div>
+					 <div id="mapHolder" className={this.state.mapStyle}><div style = {style}  className="map-canvas"></div></div>
 						<div className="textWrapper" >
 							<div className="textHolder" >
 								
 							{this.props.nearby.map(function(place, i){
 								
-									self.state.lat = place.latitude;
-									self.state.lng = place.longitude;
+									
 								if(i === self.state.counter){
-									self.state.currentIcon = place._id + 'heart';
-									self.state.restaurantId = place._id;
+									// self.state.currentIcon = place._id + 'heart';
+									// self.state.restaurantId = place._id;
 								
-									 
+									 self.state.lat = place.latitude;
+									self.state.lng = place.longitude;
 									
 								  return(
 							  
-									  	<div key={place._id}>	
+									  	<div key={place._id}>						
 									  		<i id={place._id+ 'heart'} className="fa fa-heart fa-2x "></i>					  		
 										  	<h1 className="rest-name">{place.restaurant}</h1>				  
-											<div>{place.details}</div>
-											<div>{place.numbers}</div>
-											<div>{place.address}</div>
-											<div>{place.phone}</div>
-											<div><a href={'"'+place.website+'"'}>{place.website}</a></div>
+											<div className="details">{place.details}</div>
+											<div className="address"><a href={'"http://maps.google.com/?q='+ place.address+'"'} target="_blank">{place.address}</a></div>
+											<div className="phone">{place.phone}</div>
+											<div className="url"><a href={'"'+place.website+'"'}>{place.website}</a></div>
 										</div>
 										
 								  );								
@@ -268,31 +318,53 @@ module.exports = React.createClass({
 					  <div id="mapHolder2" className={this.state.mapStyle}><div style = {style}  className="map-canvas2"></div></div>
 				
 					  <div className="textWrapper">
+					  	<div className="textHolder" >
 							  {this.props.nearby.map(function(place, i){
 							  	
 								if(i === self.state.counter){
-									// self.state.currentIcon = place._id + 'heart2';
-									self.state.restaurantId = place._id;
+									// self.state.currentIcon2 = place._id + 'heart2';
+									// self.state.restaurantId = place._id;
 								  return(
-								  	<div className="textHolder" key={place._id}>
-								  	<i id={place._id+ 'heart'} className="fa fa-heart fa-2x "></i>	
-								  	<div ><h1 className="rest-name">{place.restaurant}</h1>
-									<div>{place.details}</div>
-									<div>{place.numbers}</div>
-									<div>{place.address}</div>
-									<div>{place.phone}</div>
-									<div><a href={'"'+place.website+'"'}>{place.website}</a></div>
+								  	<div key={place._id}>
+									  	<i id={place._id+ 'heart2'} className="fa fa-heart fa-2x "></i>	
+									  	<div ><h1 className="rest-name">{place.restaurant}</h1>
+										<div className="details">{place.details}</div>
+										<div className="address"><a href={'"http://maps.google.com/?q='+ place.address+'"'} target="_blank">{place.address}</a></div>
+										<div className="phone">{place.phone}</div>
+										<div className="url"><a href={'"'+place.website+'"'}>{place.website}</a></div>
+										</div>
 									</div>
-									</div>
+									
 								  );
 								}
 							})}
-					 
+					 	</div>
 				 	 </div>
 				  	</CarouselItem>
 				  </Carousel>
 				  </div>
 			  </div>
+			<div style={hide}  ref='list' className="row list-holder">
+			  	  {this.props.nearby.map(function(place, i){
+			  	  	 counter++;
+			  	  		if(counter >= self.state.imgArray.length){
+			  	  			counter = 0;
+			  	  		}
+			  	  	return(
+			  	  		  <div key={place._id} ref="slide" className="mini-slide row">
+						  	<div  className="mini-holder">
+						  		<div className={self.state.imgArray[counter]}></div>
+						  		<div className="mini-text">
+						  			<div className="mini-rest">{place.restaurant}</div>
+						  			<div className="mini-details">{place.details}</div>
+						  			<div className="mini-address">{place.address}</div>
+						  		</div>
+						  	</div>
+						  </div>
+					  )
+					}
+				)}
+			  	  </div>
 			  <div className="row icon-row">
 			  	<div onClick={this.prev} className="col-sm-2 mob-btn ">	
 			  	  	<span className="fa-stack fa-2x">	
@@ -300,19 +372,19 @@ module.exports = React.createClass({
 			  			<i className="fa fa-hand-o-left fa-stack-1x"></i>			
 			  		</span>  				  		
 			  	</div>
-			  	<div onClick={this.add} className="col-sm-2 mob-btn ">
+			  	{/*<div onClick={this.showFav} className="col-sm-2 mob-btn ">
 			  		 <span className="fa-stack fa-2x">	
 			  	 		<i className="fa fa-circle-thin fa-stack-2x"></i>					  				  		
 			  			<i className="fa fa-glass fa-stack-1x"></i>
 			  		</span>
-			  	</div>
-			  	<div onClick={this.map}className="col-sm-2 mob-btn ">		
+			  	</div>*/}
+			  	<div onClick={this.map}className="col-sm-2 mob-btn street">		
 			  	  	 <span className="fa-stack fa-2x">	
 			  	 		<i className="fa fa-circle-thin fa-stack-2x"></i>		  		
 			  			<i className="fa fa-street-view fa-stack-1x"></i>
 			  		</span>
 			  	</div>
-			  	<div onClick={this.list}className="col-sm-2 mob-btn ">	
+			  	<div onClick={this.showFav} className="col-sm-2 mob-btn ">	
 			  	  	<span className="fa-stack fa-2x">	
 			  	 		<i className="fa fa-circle-thin fa-stack-2x"></i>			  		
 			  			<i className="fa fa-list-alt fa-stack-1x"></i>

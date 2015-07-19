@@ -33574,7 +33574,7 @@ var RestaurantModel = require('../models/RestaurantModel');
 
 module.exports = Backbone.Collection.extend({
 	model: RestaurantModel,
-	url: 'http://localhost:3000/happyhours',
+	url: 'https://calm-forest-6617.herokuapp.com/happyhours',
 	parse: function parse(res) {
 		return res.happyhours;
 	}
@@ -33588,7 +33588,7 @@ var UserModel = require('../models/UserModel');
 
 module.exports = Backbone.Collection.extend({
 	model: UserModel,
-	url: 'http://localhost:3000/users',
+	url: 'https://calm-forest-6617.herokuapp.com/users',
 	parse: function parse(res) {
 		return res.users;
 	}
@@ -33616,36 +33616,47 @@ module.exports = React.createClass({
 			username: null,
 			restaurantId: null,
 			currentIcon: null,
+			currentIcon2: null,
 			favArray: [],
 			iconArray: [],
 			lat: null,
 			lng: null,
 			mapStyle: 'mapStyle',
-			visible: null
+			visible: null,
+			map: null,
+			markers: null,
+			imgArray: ['mini-image', 'mini-image2', 'mini-image3', 'mini-image4', 'mini-image5', 'mini-image6', 'mini-image7', 'mini-image8', 'mini-image9', 'mini-image10'],
+			bigImgArray: ['imgHolder', 'imgHolder2', 'imgHolder3', 'imgHolder4', 'imgHolder5', 'imgHolder6', 'imgHolder7', 'imgHolder8', 'imgHolder9', 'mimgHolder10']
 		};
 	},
 	handleSelect: function handleSelect(selectedIndex, selectedDirection) {
-
-		console.log(this.state.lat);
-		console.log(this.state.lng);
+		var self = this;
 		if (this.state.counter === 0 && selectedDirection === 'prev') {
 			this.state.counter = this.props.nearby.length - 1;
 		} else if (this.state.counter === this.props.nearby.length - 1 && selectedDirection === 'next') {
 			this.state.counter = 0;
 		} else if (selectedDirection === 'next') {
+			// if(this.onSlideEnd){
+			self.state.counter++;
 
-			this.state.counter++;
+			// }
+			// console.log(this.onSlideEnd);
+			// this.slideEnd(selectedIndex, selectedDirection)
 		} else if (selectedDirection === 'prev') {
 			this.state.counter--;
 		}
-		console.log('counter ', this.state.counter);
-		console.log('index', this.state.index);
+		//
+		// console.log('counter ',this.state.counter )
+		// console.log('index',this.state.index )	  
 		this.setState({
 			index: selectedIndex,
 			direction: selectedDirection
 		});
+
+		// this.slideEnd(selectedIndex, selectedDirection)
 	},
 	prev: function prev() {
+
 		if (this.state.index === 0) {
 			this.state.index = 1;
 			this.handleSelect(this.state.index, 'prev');
@@ -33655,7 +33666,9 @@ module.exports = React.createClass({
 		}
 	},
 	next: function next() {
+
 		if (this.state.index === 0) {
+
 			this.state.index = 1;
 			this.handleSelect(this.state.index, 'next');
 		} else if (this.state.index === 1) {
@@ -33664,32 +33677,17 @@ module.exports = React.createClass({
 		}
 	},
 	componentDidUpdate: function componentDidUpdate() {
-		this.initialize();
-		// google.maps.event.addDomListener(window, 'load', this.initialize);	
+		// this.initialize(); 
+		google.maps.event.addDomListener(window, 'load', this.initialize());
 		this.state.username = localStorage.getItem('username');
 		this.state.userId = localStorage.getItem('id');
 		this.state.mapId = this.state.mapId;
-		// console.log(this.state.favArray)
-		var heart = this.state.currentIcon;
-		// console.log('heart ', heart)
-		$.ajax({
-			url: 'http://localhost:3000/users/' + this.state.userId,
-			type: 'GET',
-			success: function success(result) {
-				console.log(result.favorite);
-
-				for (var i = 0; i < result.favorite.length; i++) {
-					if (result.favorite[i] + 'heart' === heart) {
-						document.getElementById(heart).style.display = 'block';
-					}
-				}
-			},
-			error: function error(err) {
-				console.log(err);
-			}
-		});
 	},
-	componentDidMount: function componentDidMount() {},
+	slideEnd: function slideEnd(selectedIndex, selectedDirection) {
+		console.log('animation done');
+		// this.initialize();
+		this.marker();
+	},
 	initialize: function initialize() {
 
 		console.log('lat ', this.state.lat);
@@ -33710,15 +33708,8 @@ module.exports = React.createClass({
 
 		var styledMap = new google.maps.StyledMapType(styles, { name: 'Styled Map' });
 		var myLatlng = new google.maps.LatLng(this.state.lat, this.state.lng);
-		var mapOptions = {
-			zoom: 13,
-			center: myLatlng,
-			mapTypeControlOptions: {
-				mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-			}
 
-		};
-		var mapOptions2 = {
+		var mapOptions = {
 			zoom: 13,
 			center: myLatlng,
 			mapTypeControlOptions: {
@@ -33728,56 +33719,101 @@ module.exports = React.createClass({
 		};
 
 		var map = new google.maps.Map(document.querySelector('.map-canvas'), mapOptions);
+
 		var map2 = new google.maps.Map(document.querySelector('.map-canvas2'), mapOptions);
 
+		if (this.state.index === 0) {
+			this.state.map = map;
+		} else {
+			this.state.map = map2;
+		}
+
 		var image = 'http://tbs-va.com/wp-content/uploads/2013/05/Manhattan-Perfect-cocktail.png';
-		var marker = new google.maps.Marker({
-			position: myLatlng,
-			map: map,
-			title: 'Hello World!'
+		// var marker = new google.maps.Marker({
+		//     position: myLatlng,
+		//     map: map
 
-		});
-		var marker2 = new google.maps.Marker({
-			position: myLatlng,
-			map: map2,
-			title: 'Hello World!'
+		// });
+		this.marker();
+		// var marker2 = new google.maps.Marker({
+		//     position: myLatlng,
+		//     map: map2
 
-		});
+		// });
 
 		map.mapTypes.set('map_style', styledMap);
 		map.setMapTypeId('map_style');
 		map2.mapTypes.set('map_style', styledMap);
 		map2.setMapTypeId('map_style');
 	},
+	showFav: function showFav() {
+		// if($(this.refs.list.getDOMNode()).css('display') ==='block'){
+		// 	$(this.refs.list.getDOMNode()).css('display','none');
+		var self = this;
+		// }else{
+		// 		$(this.refs.list.getDOMNode()).css('display','block');
+		// }
+		if ($(this.refs.carousel.getDOMNode()).css('display') === 'none') {
+
+			// $(this.refs.list.getDOMNode()).css('display','none');
+			$(self.refs.list.getDOMNode()).fadeOut('fast', function () {
+				$(self.refs.carousel.getDOMNode()).fadeToggle('fast');
+			});
+
+			console.log('true');
+		} else {
+
+			$(this.refs.carousel.getDOMNode()).fadeToggle('fast', function () {
+				$(self.refs.list.getDOMNode()).slideToggle('slow', function () {
+					$('.img1').show();
+					$('.mapStyle').hide();
+				});
+			});
+		}
+	},
+	marker: function marker() {
+
+		if (this.state.markers !== null) {
+			this.state.markers.setMap(null);
+		}
+
+		var myLatlng = new google.maps.LatLng(this.state.lat, this.state.lng);
+		// console.log(myLatlng);
+		// console.log(this.state.lat, this.state.lng);
+
+		var marker = new google.maps.Marker({
+			position: myLatlng,
+			map: this.state.map
+
+		});
+
+		this.state.map.setCenter(myLatlng);
+		this.state.markers = marker;
+		// console.log('lat ',this.state.lat, 'lng ', this.state.lng)
+	},
 	map: function map(e) {
 		e.preventDefault();
-		$('.img1').hide();
-		$('.mapStyle').show();
-		this.initialize();
+		var self = this;
+		if ($('.mapStyle').css('display') === 'none') {
+
+			$('.img1').fadeToggle('fast', function () {
+				$('.mapStyle').fadeIn('fast');
+				self.initialize();
+			});
+		} else {
+
+			$('.mapStyle').fadeToggle('fast', function () {
+				$('.img1').fadeIn('fast');
+			});
+		}
+
+		// $('.mapStyle').show();
+		//  console.log('lat ', this.state.lat);
+		//   console.log('lng ', this.state.lng);
 	},
 	list: function list() {
 		$('.img1').show();
 		$('.mapStyle').hide();
-	},
-	add: function add(e) {
-		e.preventDefault();
-		// e.currentTarget.style.display = 'none';
-		console.log('user ', this.state.username);
-		console.log('fav ', this.state.restaurantId);
-		console.log('currentIcon ', this.state.currentIcon);
-		var heart = this.state.currentIcon;
-		document.getElementById(heart).style.display = 'block';
-		$.ajax({
-			url: 'http://localhost:3000/users',
-			data: { username: this.state.username, id: this.state.userId, favorite: this.state.restaurantId },
-			type: 'PUT',
-			success: function success(result) {
-				console.log(result);
-			},
-			error: function error(err) {
-				console.log(err);
-			}
-		});
 	},
 	render: function render() {
 
@@ -33794,19 +33830,20 @@ module.exports = React.createClass({
 			margin: '0',
 			padding: '0'
 		};
-		console.log(this.props);
+		var counter = 0;
+		console.log('props ', this.props.nearby);
 		return React.createElement(
 			'div',
 			null,
 			React.createElement(
 				'div',
-				{ className: 'row row-color' },
+				{ ref: 'carousel', className: 'row row-color' },
 				React.createElement(
 					'div',
 					{ className: 'col-sm-12 ' },
 					React.createElement(
 						Carousel,
-						{ activeIndex: this.state.index, direction: this.state.direction, onSelect: this.handleSelect },
+						{ className: 'carouselMain', onSlideEnd: this.slideEnd, activeIndex: this.state.index, direction: this.state.direction },
 						React.createElement(
 							CarouselItem,
 							{ className: 'carouselItem ' },
@@ -33824,11 +33861,10 @@ module.exports = React.createClass({
 									{ className: 'textHolder' },
 									this.props.nearby.map(function (place, i) {
 
-										self.state.lat = place.latitude;
-										self.state.lng = place.longitude;
 										if (i === self.state.counter) {
-											self.state.currentIcon = place._id + 'heart';
-											self.state.restaurantId = place._id;
+
+											self.state.lat = place.latitude;
+											self.state.lng = place.longitude;
 
 											return React.createElement(
 												'div',
@@ -33841,27 +33877,26 @@ module.exports = React.createClass({
 												),
 												React.createElement(
 													'div',
-													null,
+													{ className: 'details' },
 													place.details
 												),
 												React.createElement(
 													'div',
-													null,
-													place.numbers
+													{ className: 'address' },
+													React.createElement(
+														'a',
+														{ href: '"http://maps.google.com/?q=' + place.address + '"', target: '_blank' },
+														place.address
+													)
 												),
 												React.createElement(
 													'div',
-													null,
-													place.address
-												),
-												React.createElement(
-													'div',
-													null,
+													{ className: 'phone' },
 													place.phone
 												),
 												React.createElement(
 													'div',
-													null,
+													{ className: 'url' },
 													React.createElement(
 														'a',
 														{ href: '"' + place.website + '"' },
@@ -33886,59 +33921,99 @@ module.exports = React.createClass({
 							React.createElement(
 								'div',
 								{ className: 'textWrapper' },
-								this.props.nearby.map(function (place, i) {
+								React.createElement(
+									'div',
+									{ className: 'textHolder' },
+									this.props.nearby.map(function (place, i) {
 
-									if (i === self.state.counter) {
-										self.state.restaurantId = place._id;
-										return React.createElement(
-											'div',
-											{ className: 'textHolder', key: place._id },
-											React.createElement('i', { id: place._id + 'heart', className: 'fa fa-heart fa-2x ' }),
-											React.createElement(
+										if (i === self.state.counter) {
+											return React.createElement(
 												'div',
-												null,
-												React.createElement(
-													'h1',
-													{ className: 'rest-name' },
-													place.restaurant
-												),
-												React.createElement(
-													'div',
-													null,
-													place.details
-												),
-												React.createElement(
-													'div',
-													null,
-													place.numbers
-												),
-												React.createElement(
-													'div',
-													null,
-													place.address
-												),
-												React.createElement(
-													'div',
-													null,
-													place.phone
-												),
+												{ key: place._id },
+												React.createElement('i', { id: place._id + 'heart2', className: 'fa fa-heart fa-2x ' }),
 												React.createElement(
 													'div',
 													null,
 													React.createElement(
-														'a',
-														{ href: '"' + place.website + '"' },
-														place.website
+														'h1',
+														{ className: 'rest-name' },
+														place.restaurant
+													),
+													React.createElement(
+														'div',
+														{ className: 'details' },
+														place.details
+													),
+													React.createElement(
+														'div',
+														{ className: 'address' },
+														React.createElement(
+															'a',
+															{ href: '"http://maps.google.com/?q=' + place.address + '"', target: '_blank' },
+															place.address
+														)
+													),
+													React.createElement(
+														'div',
+														{ className: 'phone' },
+														place.phone
+													),
+													React.createElement(
+														'div',
+														{ className: 'url' },
+														React.createElement(
+															'a',
+															{ href: '"' + place.website + '"' },
+															place.website
+														)
 													)
 												)
-											)
-										);
-									}
-								})
+											);
+										}
+									})
+								)
 							)
 						)
 					)
 				)
+			),
+			React.createElement(
+				'div',
+				{ style: hide, ref: 'list', className: 'row list-holder' },
+				this.props.nearby.map(function (place, i) {
+					counter++;
+					if (counter >= self.state.imgArray.length) {
+						counter = 0;
+					}
+					return React.createElement(
+						'div',
+						{ key: place._id, ref: 'slide', className: 'mini-slide row' },
+						React.createElement(
+							'div',
+							{ className: 'mini-holder' },
+							React.createElement('div', { className: self.state.imgArray[counter] }),
+							React.createElement(
+								'div',
+								{ className: 'mini-text' },
+								React.createElement(
+									'div',
+									{ className: 'mini-rest' },
+									place.restaurant
+								),
+								React.createElement(
+									'div',
+									{ className: 'mini-details' },
+									place.details
+								),
+								React.createElement(
+									'div',
+									{ className: 'mini-address' },
+									place.address
+								)
+							)
+						)
+					);
+				})
 			),
 			React.createElement(
 				'div',
@@ -33955,17 +34030,7 @@ module.exports = React.createClass({
 				),
 				React.createElement(
 					'div',
-					{ onClick: this.add, className: 'col-sm-2 mob-btn ' },
-					React.createElement(
-						'span',
-						{ className: 'fa-stack fa-2x' },
-						React.createElement('i', { className: 'fa fa-circle-thin fa-stack-2x' }),
-						React.createElement('i', { className: 'fa fa-glass fa-stack-1x' })
-					)
-				),
-				React.createElement(
-					'div',
-					{ onClick: this.map, className: 'col-sm-2 mob-btn ' },
+					{ onClick: this.map, className: 'col-sm-2 mob-btn street' },
 					React.createElement(
 						'span',
 						{ className: 'fa-stack fa-2x' },
@@ -33975,7 +34040,7 @@ module.exports = React.createClass({
 				),
 				React.createElement(
 					'div',
-					{ onClick: this.list, className: 'col-sm-2 mob-btn ' },
+					{ onClick: this.showFav, className: 'col-sm-2 mob-btn ' },
 					React.createElement(
 						'span',
 						{ className: 'fa-stack fa-2x' },
@@ -33997,9 +34062,18 @@ module.exports = React.createClass({
 		);
 	}
 });
-// self.fetchData();
 
-// self.state.currentIcon = place._id + 'heart2';
+// self.state.currentIcon = place._id + 'heart';
+// self.state.restaurantId = place._id;
+
+// self.state.currentIcon2 = place._id + 'heart2';
+// self.state.restaurantId = place._id;
+/*<div onClick={this.showFav} className="col-sm-2 mob-btn ">
+ <span className="fa-stack fa-2x">	
+		<i className="fa fa-circle-thin fa-stack-2x"></i>					  				  		
+	<i className="fa fa-glass fa-stack-1x"></i>
+</span>
+</div>*/
 
 },{"./MapComponent":176,"jquery":4,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],172:[function(require,module,exports){
 'use strict';
@@ -34380,6 +34454,14 @@ module.exports = React.createClass({
 	displayName: 'exports',
 
 	render: function render() {
+		var style = {
+			width: '300px',
+			margin: '150px auto auto auto',
+			display: 'block'
+		};
+		var red = {
+			color: 'red'
+		};
 		return React.createElement(
 			'div',
 			{ className: 'row' },
@@ -34387,13 +34469,14 @@ module.exports = React.createClass({
 				'div',
 				{ className: 'col-sm-12' },
 				React.createElement(
-					'h1',
-					null,
-					'Login'
-				),
-				React.createElement(
 					'form',
-					{ onSubmit: this.login },
+					{ style: style, onSubmit: this.login },
+					React.createElement(
+						'h1',
+						null,
+						'Login'
+					),
+					React.createElement('div', { style: red, ref: 'error' }),
 					React.createElement(
 						'label',
 						null,
@@ -34409,6 +34492,7 @@ module.exports = React.createClass({
 					),
 					React.createElement('br', null),
 					React.createElement('input', { ref: 'pass', type: 'password' }),
+					React.createElement('br', null),
 					React.createElement('br', null),
 					React.createElement(
 						'button',
@@ -34435,10 +34519,12 @@ module.exports = React.createClass({
 				localStorage.setItem('username', result.username);
 				localStorage.setItem('id', result.id);
 				console.log(result.username);
+				self.refs.error.getDOMNode().innerHTML = '';
 				self.props.router.navigate('/user/' + result.username, { trigger: true });
 			},
 			error: function error(err) {
 				console.log(err);
+				self.refs.error.getDOMNode().innerHTML = err.responseText;
 			}
 		});
 	}
@@ -34831,62 +34917,68 @@ module.exports = React.createClass({
 // self.state.currentIcon = place._id + 'heart2';
 
 },{"./MapComponent":176,"jquery":4,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],176:[function(require,module,exports){
-"use strict";
+'use strict';
 
-var React = require("react");
+var React = require('react');
 
 module.exports = React.createClass({
-	displayName: "exports",
+	displayName: 'exports',
 
-	componentDidMount: function componentDidMount() {
-		function initialize() {
-			var styles = [{
-				featureType: "all",
-				stylers: [{ hue: "#ff0000",
-					saturation: -67 }]
-			}, {
-				featureType: "road.arterial",
-				elementType: "geometry",
-				stylers: [{ hue: "#ff0000" }]
-			}, {
-				featureType: "poi.business",
-				elementType: "labels",
-				stylers: [{ visibility: "off" }]
-			}];
+	componentDidUpdate: function componentDidUpdate() {
 
-			var styledMap = new google.maps.StyledMapType(styles, { name: "Styled Map" });
-			var myLatlng = new google.maps.LatLng(30.198407900000003, -97.7729914);
-			var mapOptions = {
-				zoom: 13,
-				center: myLatlng,
-				mapTypeControlOptions: {
-					mapTypeIds: [google.maps.MapTypeId.ROADMAP, "map_style"]
-				}
+		console.log('props ', this.props);
+		google.maps.event.addDomListener(window, 'load', this.initialize);
+		// google.maps.event.addDomListener(window, "load", initMap);
+	},
+	initialize: function initialize() {
+		var styles = [{
+			featureType: 'all',
+			stylers: [{ hue: '#ff0000',
+				saturation: -67 }]
+		}, {
+			featureType: 'road.arterial',
+			elementType: 'geometry',
+			stylers: [{ hue: '#ff0000' }]
+		}, {
+			featureType: 'poi.business',
+			elementType: 'labels',
+			stylers: [{ visibility: 'off' }]
+		}];
 
-			};
-			var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+		var styledMap = new google.maps.StyledMapType(styles, { name: 'Styled Map' });
 
-			var image = "http://tbs-va.com/wp-content/uploads/2013/05/Manhattan-Perfect-cocktail.png";
-			var marker = new google.maps.Marker({
-				position: myLatlng,
-				map: map,
-				title: "Hello World!"
+		var myLatlng = new google.maps.LatLng(this.props.lat, this.props.lng);
+		var mapOptions = {
+			zoom: 13,
+			center: myLatlng,
+			mapTypeControlOptions: {
+				mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+			}
 
-			});
+		};
+		var map = new google.maps.Map(document.querySelector('.map-canvas'), mapOptions);
+		// var map2 = new google.maps.Map(document.querySelector('.map-canvas2'), mapOptions);
 
-			map.mapTypes.set("map_style", styledMap);
-			map.setMapTypeId("map_style");
-		}
-		google.maps.event.addDomListener(window, "load", initialize);
+		var image = 'http://tbs-va.com/wp-content/uploads/2013/05/Manhattan-Perfect-cocktail.png';
+		var marker = new google.maps.Marker({
+			position: myLatlng,
+			map: map,
+			title: 'Hello World!'
+
+		});
+
+		map.mapTypes.set('map_style', styledMap);
+		map.setMapTypeId('map_style');
 	},
 	render: function render() {
+
 		var style = {
-			height: "100%",
-			width: "100%",
-			margin: "0",
-			padding: "0"
+			height: '100%',
+			width: '100%',
+			margin: '0',
+			padding: '0'
 		};
-		return React.createElement("div", { style: style, id: "map-canvas" });
+		return React.createElement('div', { style: style, className: 'map-canvas' });
 	}
 
 });
@@ -34912,7 +35004,10 @@ module.exports = React.createClass({
 			places: [],
 			lat: this.props.lat,
 			lng: this.props.lng,
-			nearby: []
+			nearby: [],
+			num: null,
+			currentPlace: null,
+			dist: []
 		};
 	},
 	componentWillMount: function componentWillMount() {
@@ -34923,6 +35018,54 @@ module.exports = React.createClass({
 
 	rad: function rad(x) {
 		return x * Math.PI / 180;
+	},
+	distance: function distance(p1Lat, p1Long, p2Lat, p2Long, place) {
+		var origin1 = new google.maps.LatLng(p1Lat, p1Long);
+		var destinationA = new google.maps.LatLng(p2Lat, p2Long);
+		var service = new google.maps.DistanceMatrixService();
+
+		var self = this;
+		// service.getDistanceMatrix(
+		//   {
+		//     origins: [origin1],
+		//     destinations: [destinationA],
+		//     travelMode: google.maps.TravelMode.DRIVING,
+		//     unitSystem: google.maps.UnitSystem.IMPERIAL,
+		//     avoidHighways: false,
+		//     avoidTolls: false
+		//   },
+		//   this.callback);
+
+		var num = google.maps.geometry.spherical.computeDistanceBetween(origin1, destinationA);
+		// console.log(Math.round( num * 10) / 10);
+		num *= 0.000621371192;
+		num = Math.round(num * 10) / 10;
+		console.log(num);
+		place.distance = num;
+		// console.log(place.address +' ' +place.distance)
+
+		return num;
+	},
+	callback: function callback(response, status) {
+
+		if (status != google.maps.DistanceMatrixStatus.OK) {
+			alert('Error was: ' + status);
+		} else {
+			var origins = response.originAddresses;
+			var destinations = response.destinationAddresses;
+
+			// console.log('origin ', origins);
+			// console.log(origins+ ' to ' + destinations + ' is ' + response.rows[0].elements[0].distance.text + ' and will take ' + response.rows[0].elements[0].duration.text)
+			// console.log(response.rows[0].elements[0].distance.text);
+			if (response.rows[0].elements[0].distance !== undefined) {
+				var newNum = parseInt(response.rows[0].elements[0].distance.text);
+
+				console.log(destinations + ' ' + response.rows[0].elements[0].distance.text);
+				if (newNum <= 5 && newNum !== undefined) {}
+			}
+		}
+
+		// return num
 	},
 	haversine: function haversine(p1Lat, p1Long, p2Lat, p2Long) {
 
@@ -34948,18 +35091,27 @@ module.exports = React.createClass({
 			this.state.nearby = [];
 		}
 		this.state.places.map(function (place) {
-			if (self.haversine(place.latitude, place.longitude, self.props.lat, self.props.lng) <= 3) {
+			self.state.currentPlace = place;
+
+			if (self.distance(self.props.lat, self.props.lng, place.latitude, place.longitude, place) <= 4) {
 				self.state.nearby.push(place);
 			}
+			//
+			// console.log('true')
+
+			// if(self.haversine(place.latitude,place.longitude, self.props.lat, self.props.lng) <= 3 ){
+			// 	self.state.nearby.push(place);
+			// }		
 		});
 	},
 	render: function render() {
 		self = this;
+		this.nearbyPlaces();
 		var style = {
 			color: 'blue'
 		};
 		// console.log('dis ' +this.haversine(30.26654,-97.738194, this.state.lat, this.state.lng));
-		this.nearbyPlaces();
+		// this.nearbyPlaces();
 		// console.log(Boolean(this.state.nearby))
 		// console.log('places ', this.state.places)
 		// console.log('nearby ', this.state.nearby)
@@ -34970,12 +35122,14 @@ module.exports = React.createClass({
 			React.createElement(CarouselComponent, { lat: this.props.lat, lng: this.props.lng, router: this.props.router, places: this.state.places, nearby: this.state.nearby, counter: 0, haversine: this.haversine })
 		);
 	},
-	componentDidiMount: function componentDidiMount() {},
+	componentDidUpdate: function componentDidUpdate() {},
 	fetchData: function fetchData() {
 		self = this;
 		restaurants.fetch({
 			success: function success(mod, i) {
 				// console.log(i)
+
+				// console.log(i.happyhours)
 				self.setState({
 					places: i.happyhours
 				});
@@ -34984,6 +35138,13 @@ module.exports = React.createClass({
 	}
 
 });
+
+// console.log(response)
+
+// place.distance = response.rows[0].elements[0].distance.text
+// place.duration = response.rows[0].elements[0].duration.text
+//   	self.state.nearby.push(self.state.currentPlace);
+// console.log(newNum)
 
 },{"../collections/RestaurantCollection":169,"../components/CarouselComponent":171,"./MapComponent":176,"backbone":1,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],178:[function(require,module,exports){
 'use strict';
@@ -35012,6 +35173,9 @@ module.exports = React.createClass({
 	},
 	render: function render() {
 		this.update();
+		var style = {
+			display: 'none'
+		};
 		return React.createElement(
 			'div',
 			null,
@@ -35024,11 +35188,11 @@ module.exports = React.createClass({
 					React.createElement(
 						'h1',
 						null,
-						'Happy Hour'
+						'Happy Hour!'
 					),
 					React.createElement(
 						'span',
-						{ className: 'user', onClick: this.slide, className: 'user' },
+						{ style: style, className: 'user', onClick: this.slide, className: 'user' },
 						'Welcome ',
 						this.state.username,
 						'!'
@@ -35068,6 +35232,7 @@ var UserModel = require('../models/UserModel');
 var UserCollection = require('../collections/UserCollection');
 var $ = require('jquery');
 var myUserlist = new UserCollection();
+var RestaurantModel = require('../models/RestaurantModel');
 
 module.exports = React.createClass({
 	displayName: 'exports',
@@ -35075,7 +35240,8 @@ module.exports = React.createClass({
 	getInitialState: function getInitialState() {
 		return {
 			myCollection: [],
-			user: 'none'
+			user: 'none',
+			restCollection: null
 		};
 	},
 	componentDidMount: function componentDidMount() {
@@ -35090,6 +35256,7 @@ module.exports = React.createClass({
 		// }.bind(this))
 	},
 	render: function render() {
+		this.cycle();
 		var style = {
 			marginRight: '5px'
 		};
@@ -35219,6 +35386,71 @@ module.exports = React.createClass({
 						)
 					);
 				}).reverse()
+			),
+			React.createElement(
+				'div',
+				null,
+				React.createElement(
+					'label',
+					null,
+					'Restaurant'
+				),
+				React.createElement('br', null),
+				React.createElement('input', { ref: 'restaurant', type: 'text' }),
+				React.createElement('br', null),
+				React.createElement(
+					'label',
+					null,
+					'details'
+				),
+				React.createElement('br', null),
+				React.createElement('input', { ref: 'details', type: 'text' }),
+				React.createElement('br', null),
+				React.createElement(
+					'label',
+					null,
+					'address'
+				),
+				React.createElement('br', null),
+				React.createElement('input', { ref: 'address', type: 'text' }),
+				React.createElement('br', null),
+				React.createElement(
+					'label',
+					null,
+					'phone'
+				),
+				React.createElement('br', null),
+				React.createElement('input', { ref: 'phone', type: 'text' }),
+				React.createElement('br', null),
+				React.createElement(
+					'label',
+					null,
+					'website'
+				),
+				React.createElement('br', null),
+				React.createElement('input', { ref: 'website', type: 'text' }),
+				React.createElement('br', null),
+				React.createElement(
+					'label',
+					null,
+					'latitude'
+				),
+				React.createElement('br', null),
+				React.createElement('input', { ref: 'latitude', type: 'text' }),
+				React.createElement('br', null),
+				React.createElement(
+					'label',
+					null,
+					'longitude'
+				),
+				React.createElement('br', null),
+				React.createElement('input', { ref: 'longitude', type: 'text' }),
+				React.createElement('br', null),
+				React.createElement(
+					'button',
+					{ onClick: this.addRest },
+					'Submit'
+				)
 			)
 		);
 	},
@@ -35229,7 +35461,7 @@ module.exports = React.createClass({
 		var pass = this.refs.age.getDOMNode().value;
 		console.log('click');
 		$.ajax({
-			url: 'http://localhost:3000/login',
+			url: 'https://calm-forest-6617.herokuapp.com/users',
 			data: { username: name, password: pass },
 			type: 'POST',
 			success: function success(result) {
@@ -35248,7 +35480,7 @@ module.exports = React.createClass({
 		var pass = this.refs.age.getDOMNode().value;
 		console.log('click');
 		$.ajax({
-			url: 'http://localhost:3000/logout',
+			url: 'https://calm-forest-6617.herokuapp.com/users',
 			data: {},
 			type: 'GET',
 			success: function success(result) {
@@ -35274,6 +35506,48 @@ module.exports = React.createClass({
 			console.log(err);
 		});
 	},
+	addRest: function addRest(e) {
+		var restaurant = this.refs.restaurant.getDOMNode().value;
+		var details = this.refs.details.getDOMNode().value;
+		var address = this.refs.address.getDOMNode().value;
+		var phone = this.refs.phone.getDOMNode().value;
+		var website = this.refs.website.getDOMNode().value;
+		var latitude = this.refs.latitude.getDOMNode().value;
+		var longitude = this.refs.longitude.getDOMNode().value;
+		self = this;
+		e.preventDefault();
+		var restaurant = new RestaurantModel({
+			restaurant: restaurant,
+			details: details,
+			address: address,
+			phone: phone,
+			website: website,
+			latitude: latitude,
+			longitude: longitude
+		});
+		restaurant.save().done(function (data) {
+			// console.log('saved')
+			// self.fetchData();
+			console.log(data);
+		}, function (err) {
+			console.log(err);
+		});
+	},
+	cycle: function cycle() {
+		$.ajax({
+			url: 'https://calm-forest-6617.herokuapp.com/happyhours/',
+			type: 'GET',
+			success: function success(result) {
+				// console.log(result);
+
+				for (var i = 0; i < result.happyhours.length; i++) {}
+			},
+			error: function error(err) {
+				console.log(err);
+			}
+		});
+		console.log('collect ', this.state.restCollection);
+	},
 	'delete': function _delete(e) {
 		e.preventDefault();
 		console.log(this.refs.modelId.getDOMNode().value);
@@ -35282,7 +35556,7 @@ module.exports = React.createClass({
 		var id = this.refs.modelId.getDOMNode().value;
 
 		$.ajax({
-			url: 'http://localhost:3000/users',
+			url: 'https://calm-forest-6617.herokuapp.com/users',
 			data: { id: id },
 			type: 'DELETE',
 			success: function success(result) {
@@ -35302,7 +35576,7 @@ module.exports = React.createClass({
 		var pass = this.refs.age.getDOMNode().value;
 
 		$.ajax({
-			url: 'http://localhost:3000/users',
+			url: 'https://calm-forest-6617.herokuapp.com/users',
 			data: { id: id, username: name, password: pass },
 			type: 'PUT',
 			success: function success(result) {
@@ -35318,7 +35592,7 @@ module.exports = React.createClass({
 		e.preventDefault();
 		self = this;
 		var id = this.refs.modelId.getDOMNode().value;
-		$.get('http://localhost:3000/users/' + id, function (data) {
+		$.get('https://calm-forest-6617.herokuapp.com/users' + id, function (data) {
 			console.log(data);
 			self.setState({
 				user: data
@@ -35337,8 +35611,66 @@ module.exports = React.createClass({
 	}
 
 });
+// $.ajax({
+//     url: 'http://localhost:3000/happyhours',
+//     data: {
+//     	restaurant: restaurant,
+//     	details: details,
+//     	address: address,
+//     	phone: phone,
+//     	website: website,
+//     	latitude: latitude,
+//     	longitude: longitude
+//     },
+//     type: 'POST',
+//     success: function(result) {
+//         console.log(result);
+//         // self.fetchData();
+//     },
+//     error: function(err){
+//     	console.log(err);
+//     }
+// });
+// 	$.ajax({
+// 	    url: 'http://localhost:3000/happyhours',
+// 	    type: 'GET',
+// 	    success: function(result) {
+// 	        console.log(result);
 
-},{"../collections/UserCollection":170,"../models/UserModel":182,"backbone":1,"jquery":4,"react":168}],180:[function(require,module,exports){
+// 	        for(var i = 0; i < result.length; i++){
+// 	        	console.log(result[i])
+// 	        }
+
+// 	    },
+// 	    error: function(err){
+// 	    	console.log(err);
+// 	    }
+// 	});
+// console.log('collect ',this.state.restCollection)
+
+//     	 console.log(result.happyhours.length)
+
+//     		var restaurant = new RestaurantModel({
+//    	restaurant: result.happyhours[i].restaurant,
+//    	details: result.happyhours[i].details,
+//    	address: result.happyhours[i].address,
+//    	phone: result.happyhours[i].phone,
+//    	website: result.happyhours[i].website,
+//    	latitude: result.happyhours[i].latitude,
+//    	longitude: result.happyhours[i].longitude
+// })
+// restaurant.save().done(
+// 	function(data){
+// 		// console.log('saved')
+// 		// self.fetchData();
+// 		console.log(data);
+// 	},
+// 	function(err){
+// 		console.log(err);
+// 	}
+// )
+
+},{"../collections/UserCollection":170,"../models/RestaurantModel":181,"../models/UserModel":182,"backbone":1,"jquery":4,"react":168}],180:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -35384,7 +35716,6 @@ var App = Backbone.Router.extend({
 		React.render(React.createElement(
 			'div',
 			null,
-			React.createElement(User, null),
 			React.createElement(FavList, { router: myRouter })
 		), el);
 	},
@@ -35409,6 +35740,7 @@ var App = Backbone.Router.extend({
 
 var myRouter = new App();
 Backbone.history.start();
+/*<User/>*/
 
 },{"./collections/UserCollection":170,"./components/CarouselComponent":171,"./components/FavListComponent":172,"./components/LocationComponent":173,"./components/LoginComponent":174,"./components/MapCarousel":175,"./components/MapComponent":176,"./components/User":178,"./components/UserComponent":179,"backbone":1,"react":168,"react-bootstrap/lib/Carousel":6,"react-bootstrap/lib/CarouselItem":7}],181:[function(require,module,exports){
 'use strict';
@@ -35422,12 +35754,10 @@ module.exports = Backbone.Model.extend({
 		address: '',
 		phone: '',
 		website: '',
-		url: '',
 		latitude: '',
-		longitude: '',
-		_id: ''
+		longitude: ''
 	},
-	urlRoot: 'http://localhost:3000/happyhours',
+	urlRoot: 'https://calm-forest-6617.herokuapp.com/happyhours',
 	idAttribute: '_id'
 });
 
@@ -35442,7 +35772,7 @@ module.exports = Backbone.Model.extend({
 		age: '',
 		_id: ''
 	},
-	urlRoot: 'http://localhost:3000/users',
+	urlRoot: 'https://calm-forest-6617.herokuapp.com/users',
 	idAttribtue: '_id'
 });
 

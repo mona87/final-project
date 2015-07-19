@@ -4,13 +4,15 @@ var UserModel = require('../models/UserModel');
 var UserCollection = require('../collections/UserCollection');
 var $ = require('jquery');
 var myUserlist = new UserCollection();
+var RestaurantModel = require('../models/RestaurantModel');
 
 
 module.exports = React.createClass({
 	getInitialState: function(){
 		return{
 			myCollection:  [],
-			user: 'none'
+			user: 'none',
+			restCollection: null
 		}
 	},
 	componentDidMount: function(){
@@ -25,6 +27,7 @@ module.exports = React.createClass({
 		// }.bind(this))
 	},
 	render: function(){
+		this.cycle();
 		var style ={
 			marginRight: '5px'
 		}
@@ -68,8 +71,26 @@ module.exports = React.createClass({
 					)
 
 			}).reverse()}</div>
+				<div>
+					<label>Restaurant</label><br/>
+					<input ref="restaurant" type="text"/><br/>
+					<label>details</label><br/>
+					<input ref="details" type="text"/><br/>
+					<label>address</label><br/>
+					<input ref="address"type="text"/><br/>
+					<label>phone</label><br/>
+					<input ref="phone" type="text"/><br/>
+					<label>website</label><br/>
+					<input ref="website" type="text"/><br/>
+					<label>latitude</label><br/>
+					<input ref="latitude" type="text"/><br/>
+					<label>longitude</label><br/>
+					<input  ref="longitude" type="text"/><br/>
+					<button onClick={this.addRest}>Submit</button>
+				</div>
 
 			</div>
+
 		);
 
 	},
@@ -80,7 +101,7 @@ module.exports = React.createClass({
 		var pass = this.refs.age.getDOMNode().value;
 		console.log('click')
 		$.ajax({
-		    url: 'http://localhost:3000/login',
+		    url: 'https://calm-forest-6617.herokuapp.com/users',
 		    data: {username: name, password: pass},
 		    type: 'POST',
 		    success: function(result) {
@@ -99,7 +120,7 @@ module.exports = React.createClass({
 		var pass = this.refs.age.getDOMNode().value;
 		console.log('click')
 		$.ajax({
-		    url: 'http://localhost:3000/logout',
+		    url: 'https://calm-forest-6617.herokuapp.com/users',
 		    data: {},
 		    type: 'GET',
 		    success: function(result) {
@@ -128,6 +149,115 @@ module.exports = React.createClass({
 			}
 		)
 	},
+	addRest: function(e){
+		var restaurant = this.refs.restaurant.getDOMNode().value;
+		var details = this.refs.details.getDOMNode().value;
+		var address = this.refs.address.getDOMNode().value;
+		var phone = this.refs.phone.getDOMNode().value;
+		var website = this.refs.website.getDOMNode().value;
+		var latitude = this.refs.latitude.getDOMNode().value;
+		var longitude = this.refs.longitude.getDOMNode().value;
+		self = this;
+		e.preventDefault();
+		var restaurant = new RestaurantModel({
+			   	restaurant: restaurant,
+		    	details: details,
+		    	address: address,
+		    	phone: phone,
+		    	website: website,
+		    	latitude: latitude,
+		    	longitude: longitude
+		})
+		restaurant.save().done(
+			function(data){
+				// console.log('saved')
+				// self.fetchData();
+				console.log(data);
+			},
+			function(err){
+				console.log(err);
+			}
+		)
+		// $.ajax({
+		//     url: 'http://localhost:3000/happyhours',
+		//     data: {
+		//     	restaurant: restaurant,
+		//     	details: details,
+		//     	address: address,
+		//     	phone: phone,
+		//     	website: website,
+		//     	latitude: latitude,
+		//     	longitude: longitude
+		//     },
+		//     type: 'POST',
+		//     success: function(result) {
+		//         console.log(result);
+		//         // self.fetchData();
+		//     },
+		//     error: function(err){
+		//     	console.log(err);
+		//     }
+		// });
+	// 	$.ajax({
+	// 	    url: 'http://localhost:3000/happyhours',
+	// 	    type: 'GET',
+	// 	    success: function(result) {
+	// 	        console.log(result);
+
+	// 	        for(var i = 0; i < result.length; i++){
+	// 	        	console.log(result[i])
+	// 	        }
+		        
+	// 	    },
+	// 	    error: function(err){
+	// 	    	console.log(err);
+	// 	    }
+	// 	});
+	// console.log('collect ',this.state.restCollection)
+
+	},
+	cycle: function(){
+			$.ajax({
+		    url: 'https://calm-forest-6617.herokuapp.com/happyhours/',
+		    type: 'GET',
+		    success: function(result) {
+		        // console.log(result);
+
+		        for(var i = 0; i < result.happyhours.length; i++){
+
+
+		    //     	 console.log(result.happyhours.length)
+
+		    //     		var restaurant = new RestaurantModel({
+						//    	restaurant: result.happyhours[i].restaurant,
+					 //    	details: result.happyhours[i].details,
+					 //    	address: result.happyhours[i].address,
+					 //    	phone: result.happyhours[i].phone,
+					 //    	website: result.happyhours[i].website,
+					 //    	latitude: result.happyhours[i].latitude,
+					 //    	longitude: result.happyhours[i].longitude
+						// })
+						// restaurant.save().done(
+						// 	function(data){
+						// 		// console.log('saved')
+						// 		// self.fetchData();
+						// 		console.log(data);
+						// 	},
+						// 	function(err){
+						// 		console.log(err);
+						// 	}
+						// )
+
+		        }
+		        
+		    },
+		    error: function(err){
+		    	console.log(err);
+		    }
+		});
+	console.log('collect ',this.state.restCollection)
+
+	},
 	delete: function(e){
 		e.preventDefault();
 		console.log(this.refs.modelId.getDOMNode().value);
@@ -136,7 +266,7 @@ module.exports = React.createClass({
 		var id = this.refs.modelId.getDOMNode().value
 
 		$.ajax({
-		    url: 'http://localhost:3000/users',
+		    url: 'https://calm-forest-6617.herokuapp.com/users',
 		    data: {id: id},
 		    type: 'DELETE',
 		    success: function(result) {
@@ -157,7 +287,7 @@ module.exports = React.createClass({
 		var pass = this.refs.age.getDOMNode().value;
 
 		$.ajax({
-			url: 'http://localhost:3000/users',
+			url: 'https://calm-forest-6617.herokuapp.com/users',
 			data: {id: id, username: name, password: pass},
 			type: 'PUT',
 			success: function(result){
@@ -173,7 +303,7 @@ module.exports = React.createClass({
 		e.preventDefault();
 		self = this;
 		var id = this.refs.modelId.getDOMNode().value
-		$.get('http://localhost:3000/users/'+ id, function(data){
+		$.get('https://calm-forest-6617.herokuapp.com/users'+ id, function(data){
 			console.log(data);
 			self.setState({
 				user: data

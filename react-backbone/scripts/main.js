@@ -45,7 +45,7 @@ var App = Backbone.Router.extend({
 	 	console.log('favorite');
 		 React.render(
 		 	<div>
-		 	<User/>
+		 	{/*<User/>*/}
 		 	<FavList router={myRouter}/>
 		 	</div>, el);
 

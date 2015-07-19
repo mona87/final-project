@@ -3,6 +3,6 @@ var RestaurantModel = require('../models/RestaurantModel');
 
 module.exports = Backbone.Collection.extend({
 	model: RestaurantModel,
-	url: 'http://localhost:3000/happyhours',
+	url: 'https://calm-forest-6617.herokuapp.com/happyhours',
 	parse: function(res){return res.happyhours}
 })

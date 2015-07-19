@@ -7,11 +7,9 @@ module.exports = Backbone.Model.extend({
 		address: '',
 		phone: '',
 		website: '',
-		url: '',
 		latitude: '',
-		longitude: '',
-		_id: ''
+		longitude: ''
 	},
-	urlRoot: 'http://localhost:3000/happyhours',
+	urlRoot: 'https://calm-forest-6617.herokuapp.com/happyhours',
 	idAttribute: '_id'
 })

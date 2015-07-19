@@ -1,8 +1,13 @@
 var React = require('react');
 
 module.exports = React.createClass({
-	componentDidMount: function(){
-		function initialize() {
+	componentDidUpdate: function(){
+	
+		    console.log('props ', this.props);
+			 google.maps.event.addDomListener(window, 'load', this.initialize);	
+				// google.maps.event.addDomListener(window, "load", initMap);
+	},
+	initialize: function(){
 			var styles = [
 			  {
 			    featureType: "all",
@@ -28,7 +33,8 @@ module.exports = React.createClass({
 
 		  var styledMap = new google.maps.StyledMapType(styles,
     			{name: "Styled Map"});
-		  var myLatlng = new google.maps.LatLng(30.198407900000003,-97.7729914);
+
+		  var myLatlng = new google.maps.LatLng(this.props.lat,this.props.lng);
 		  var mapOptions = {
 		    zoom: 13,
 		    center: myLatlng,
@@ -37,7 +43,8 @@ module.exports = React.createClass({
     		},
 
 		  }
-		  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		  var map = new google.maps.Map(document.querySelector('.map-canvas'), mapOptions);
+		  // var map2 = new google.maps.Map(document.querySelector('.map-canvas2'), mapOptions);
 
 		  var image = 'http://tbs-va.com/wp-content/uploads/2013/05/Manhattan-Perfect-cocktail.png'
 		  var marker = new google.maps.Marker({
@@ -46,13 +53,13 @@ module.exports = React.createClass({
 		      title: 'Hello World!',
 		     
 		  });
+	
 			
 			map.mapTypes.set('map_style', styledMap);
   			map.setMapTypeId('map_style');
-  		}
-			google.maps.event.addDomListener(window, 'load', initialize);	
 	},
 	render: function(){
+		
 		var style={
 			height: '100%',
 			width: '100%',
@@ -60,7 +67,7 @@ module.exports = React.createClass({
 			padding: '0'
 		}
 		return(
-			<div style = {style} id="map-canvas"></div>
+			<div style = {style} className="map-canvas"></div>
 		);
 	}
 

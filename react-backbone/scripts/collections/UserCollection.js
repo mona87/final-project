@@ -3,6 +3,6 @@ var UserModel = require('../models/UserModel');
 
 module.exports = Backbone.Collection.extend({
 	model: UserModel,
-	url: 'http://localhost:3000/users',
+	url: 'https://calm-forest-6617.herokuapp.com/users',
 	parse: function(res){return res.users}
 });

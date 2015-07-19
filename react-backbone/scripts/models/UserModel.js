@@ -6,6 +6,6 @@ module.exports = Backbone.Model.extend({
 		age: '',
 		_id: ''
 	},
-	urlRoot: 'http://localhost:3000/users',
+	urlRoot: 'https://calm-forest-6617.herokuapp.com/users',
 	idAttribtue: '_id'
 })
