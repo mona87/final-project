@@ -2,7 +2,7 @@ var React = require('react');
 var $ = require('jquery')
 var Carousel = require('react-bootstrap/lib/Carousel');
 var CarouselItem = require('react-bootstrap/lib/CarouselItem');
-var MapComponent = require('./MapComponent');
+
 
 
 module.exports = React.createClass({
@@ -26,11 +26,14 @@ module.exports = React.createClass({
 			  map: null,
 			  markers: null,
 			  imgArray: ['mini-image','mini-image2','mini-image3', 'mini-image4', 'mini-image5', 'mini-image6', 'mini-image7', 'mini-image8', 'mini-image9', 'mini-image10'],
-			  bigImgArray: ['imgHolder','imgHolder2','imgHolder3', 'imgHolder4', 'imgHolder5', 'imgHolder6', 'imgHolder7', 'imgHolder8', 'imgHolder9', 'mimgHolder10']
+			  bigImgArray: [ 'bigImg1','bigImg2', 'bigImg3', 'bigImg4', 'bigImg5', 'bigImg6', 'bigImg7', 'bigImg8', 'bigImg9', 'bigImg10'],
+			  imgCounter: 0
 			};
 		  },
 		  handleSelect: function(selectedIndex, selectedDirection) {
 		  	var self = this;
+
+
 		  	if(this.state.counter === 0 && selectedDirection === 'prev'){      
 				this.state.counter = this.props.nearby.length-1;
 			}		
@@ -39,8 +42,8 @@ module.exports = React.createClass({
 			}
 			else if(selectedDirection === 'next')
 			{	
-				// if(this.onSlideEnd){
-					 self.state.counter++;
+				
+				self.state.counter++;
 					
 				// }
 				// console.log(this.onSlideEnd);
@@ -61,27 +64,46 @@ module.exports = React.createClass({
 				// this.slideEnd(selectedIndex, selectedDirection)
 		  },
 		  prev: function(){
+		  				
 
+
+		  		console.log('count ',this.state.bigImgArray[this.state.imgCounter]);
 		  	if (this.state.index === 0 ){
 		  		this.state.index = 1;
+		  			 this.state.imgCounter++
 		  		this.handleSelect(this.state.index, 'prev');
 		  	}else if(this.state.index === 1 ){
 		  		this.state.index = 0;
 		  		this.handleSelect(this.state.index, 'prev');
 		  	}
+
+		  	  	if(this.state.imgCounter === 0){
+		  			
+		  			this.state.imgCounter = this.state.bigImgArray.length-1;
+
+		  			console.log('update ', this.state.imgCounter)
+		  		}else{
+		  			this.state.imgCounter--;
+		  		}
 		  	
 		  },
 		  next: function(){
 
-
 		  	if (this.state.index === 0 ){
 		  		
+		  	
 		  		this.state.index = 1
 		  		this.handleSelect(this.state.index, 'next');
 		  	}else if(this.state.index === 1 ){
 		  		this.state.index = 0;
 		  		this.handleSelect(this.state.index, 'next');
 		  	}
+		  	
+		  	if(this.state.imgCounter >= this.state.bigImgArray.length-1){
+		  			this.state.imgCounter = 0
+		  		}else{
+		  			this.state.imgCounter++;
+		  		}
 		  		
 		  	
 		  },
@@ -96,12 +118,13 @@ module.exports = React.createClass({
 		  		console.log('animation done');
 		  		// this.initialize();
 		  		 this.marker();	
+		  		 return true
 						
 		  },
 		  initialize: function() {
 
-		  		console.log('lat ', this.state.lat);
-		  		console.log('lng ', this.state.lng);
+		  		// console.log('lat ', this.state.lat);
+		  		// console.log('lng ', this.state.lng);
 				var styles = [
 					  {
 					    featureType: "all",
@@ -276,7 +299,7 @@ module.exports = React.createClass({
 				
 				  <Carousel  className='carouselMain' onSlideEnd={this.slideEnd}  activeIndex={this.state.index} direction={this.state.direction} >
 				   <CarouselItem className="carouselItem ">				  
-				   <div className="imgHolder img1"></div>
+				   <div className={this.state.bigImgArray[this.state.imgCounter] + ' img1'} ></div>
 					 <div id="mapHolder" className={this.state.mapStyle}><div style = {style}  className="map-canvas"></div></div>
 						<div className="textWrapper" >
 							<div className="textHolder" >
@@ -314,7 +337,7 @@ module.exports = React.createClass({
 
 				 <CarouselItem className="carouselItem ">
 				
-				   <div className="imgHolder2 img1" alt='900x500'></div>
+				   <div className={this.state.bigImgArray[this.state.imgCounter] + ' img1'} alt='900x500'></div>
 					  <div id="mapHolder2" className={this.state.mapStyle}><div style = {style}  className="map-canvas2"></div></div>
 				
 					  <div className="textWrapper">
@@ -347,7 +370,7 @@ module.exports = React.createClass({
 			<div style={hide}  ref='list' className="row list-holder">
 			  	  {this.props.nearby.map(function(place, i){
 			  	  	 counter++;
-			  	  		if(counter >= self.state.imgArray.length){
+			  	  		if(counter >= self.state.imgArray.length-1){
 			  	  			counter = 0;
 			  	  		}
 			  	  	return(

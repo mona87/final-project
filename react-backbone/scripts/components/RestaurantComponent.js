@@ -2,7 +2,6 @@ var Backbone = require ('backbone');
 var React = require('react');
 var RestaurantCollection = require('../collections/RestaurantCollection');
 var restaurants = new RestaurantCollection();
-var MapComponent = require('./MapComponent');
 var CarouselComponent = require('../components/CarouselComponent');
 var Carousel = require('react-bootstrap/lib/Carousel');
 var CarouselItem = require('react-bootstrap/lib/CarouselItem');
