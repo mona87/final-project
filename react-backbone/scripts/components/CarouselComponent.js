@@ -29,7 +29,9 @@ module.exports = React.createClass({
 			  bigImgArray: [ 'bigImg1','bigImg2', 'bigImg3', 'bigImg4', 'bigImg5', 'bigImg6', 'bigImg7', 'bigImg8', 'bigImg9', 'bigImg10'],
 			  imgCounter: 0,
 			  length: null,
-			  hide: 'none'
+			  hide: 'none',
+			  random: 3,
+			  random2: 4
 			};
 		  },
 		  handleSelect: function(selectedIndex, selectedDirection) {
@@ -46,18 +48,11 @@ module.exports = React.createClass({
 			{	
 				
 				self.state.counter++;
-					
-				// }
-				// console.log(this.onSlideEnd);
-				// this.slideEnd(selectedIndex, selectedDirection)
 			  	  		
 			}
 			else if(selectedDirection === 'prev'){		
 			  	this.state.counter--;
-			}	
-				// 
-				// console.log('counter ',this.state.counter )
-				// console.log('index',this.state.index )	   
+			}	   
 				this.setState({
 				  index: selectedIndex,
 				  direction: selectedDirection
@@ -69,22 +64,12 @@ module.exports = React.createClass({
 		  	console.log('count ',this.state.bigImgArray[this.state.imgCounter]);
 		  	if (this.state.index === 0 ){
 		  		this.state.index = 1;
-		  			 this.state.imgCounter++
+		  			 // this.state.imgCounter++
 		  		this.handleSelect(this.state.index, 'prev');
 		  	}else if(this.state.index === 1 ){
 		  		this.state.index = 0;
 		  		this.handleSelect(this.state.index, 'prev');
-		  	}
-
-		  	  	if(this.state.imgCounter === 0){
-		  			
-		  			this.state.imgCounter = this.state.bigImgArray.length-1;
-
-		  			console.log('update ', this.state.imgCounter)
-		  		}else{
-		  			this.state.imgCounter--;
-		  		}
-		  	
+		  	}		  	
 		  },
 		  next: function(){
 		  	var self = this;
@@ -105,23 +90,10 @@ module.exports = React.createClass({
 		  		//  $('.item1').fadeOut('fast', function(){
 		  		// 	 	self.state.imgCounter++;
 		  		// });
-		  	}
-
-		  	if(this.state.imgCounter >= this.state.bigImgArray.length-1){
-		  			 // $(this.refs.bigImg.getDOMNode()).fadeIn('fast', function(){
-		  			 // 	// self.state.imgCounter = 0;
-		  			 // });
-		  			 // $(this.refs.bigImg2.getDOMNode()).fadeIn('fast');
-		  			 	self.state.imgCounter = 0;
-		  			
-		  		}else{
-		  			 // $(this.refs.bigImg.getDOMNode()).fadeIn('fast', function(){
-		  			 // 	self.state.imgCounter++;
-		  			 // });
-		  			 // $(this.refs.bigImg2.getDOMNode()).fadeIn('fast');
-		  			self.state.imgCounter++;
-		  				
-		  		}		  	
+		  	}	  	
+		  },
+		  componentWillMount: function(){
+		  	this.random();
 		  },
 		  shouldComponentUpdate: function(props){
 
@@ -129,7 +101,7 @@ module.exports = React.createClass({
 		  },
 		  componentDidUpdate: function(){
 		 	 // this.initialize();  
-	
+			
 		 	 console.log('props ', this.props.nearby)
 		  	google.maps.event.addDomListener(window, 'load', this.initialize());	
 			
@@ -204,6 +176,7 @@ module.exports = React.createClass({
 		  		// if($(this.refs.list.getDOMNode()).css('display') ==='block'){
 		  		// 	$(this.refs.list.getDOMNode()).css('display','none');
 		  		var self = this;
+		  			
 		  		// }else{
 		  		// 		$(this.refs.list.getDOMNode()).css('display','block');
 		  		// }
@@ -212,6 +185,7 @@ module.exports = React.createClass({
 						// $(this.refs.list.getDOMNode()).css('display','none');
 						$(self.refs.list.getDOMNode()).slideUp('slow', function(){
 								$(self.refs.carousel.getDOMNode()).fadeToggle('slow');
+
 						})
 					
 						console.log('true');
@@ -223,6 +197,7 @@ module.exports = React.createClass({
 		  				$(self.refs.list.getDOMNode()).slideToggle('slow', function(){
 		  				$('.img1').show();
 		  				$('.mapStyle').hide();
+		  					// self.random();
 		  				});
 		  		});
 		  	}
@@ -248,13 +223,25 @@ module.exports = React.createClass({
 				  // console.log('lat ',this.state.lat, 'lng ', this.state.lng)
 
 		  },
+		  random: function(){
+		  	var randomnumber = Math.floor(Math.random() * (4 - 0 + 1)) + 0;
+		  	var randomnumber2 = Math.floor(Math.random() * (9 - 5 + 1)) + 5;
+		  	this.setState({
+		  		random: randomnumber,
+		  		random2:  randomnumber2
+		  	})
+		  	console.log('random ', this.state.random);
+		  		console.log('random2 ', this.state.random2);
+		  },
 		  map: function(e){
 		  		e.preventDefault();	
 		  		var self = this; 
+		  			
 		  		if($('.mapStyle').css('display') === 'none'){ 	
 		  			
 		  			$('.img1').fadeToggle('fast', function(){
 		  				 $('.mapStyle').fadeIn('fast');
+		  				 // self.random();
 		  				 self.initialize();
 		  			});
 		  			
@@ -267,19 +254,14 @@ module.exports = React.createClass({
 		  			 
 		  		  
 		  		}	 
-		  		 
-		  		  // $('.mapStyle').show();
-		  		  //  console.log('lat ', this.state.lat);
-		  		  //   console.log('lng ', this.state.lng);
-
-		  		    
-		  		    
+	    
 		  },
 		  list: function(){
 		  		$('.img1').show();
 		  		$('.mapStyle').hide();
 		  },
 		  hideMe: function(){
+		  	$(this.refs.icons.getDOMNode()).show();
 		  	$(this.refs.begin.getDOMNode()).fadeOut('fast');
 		  		this.setState({
 		  			hide: 'block'
@@ -303,12 +285,7 @@ module.exports = React.createClass({
 				padding: '0'
 			}
 			var counter = 0;
-			var pStyle ={
-				color: 'white',
-				fontSize: '20px',
-				textAlign: 'center',
-				margin: '30px 0 20px 0'
-			}
+	
 			var hideCarousel ={
 				display: this.state.hide
 
@@ -322,7 +299,7 @@ module.exports = React.createClass({
 				
 				  <Carousel style={hideCarousel} className='carouselMain' onSlideEnd={this.slideEnd}  activeIndex={this.state.index} direction={this.state.direction} >
 				   <CarouselItem className="carouselItem item1">				  
-				   <div  ref="bigImg"  className={this.state.bigImgArray[this.state.imgCounter] + ' img1'} ></div>
+				   <div  ref="bigImg"  className={this.state.bigImgArray[this.state.random] + ' img1'} ></div>
 					 <div id="mapHolder" className={this.state.mapStyle}><div style = {style}  className="map-canvas"></div></div>
 						<div className="textWrapper" >
 							<div className="textHolder" >
@@ -361,7 +338,7 @@ module.exports = React.createClass({
 
 				 <CarouselItem className="carouselItem item2 ">
 				
-				   <div  ref="bigImg2" className={this.state.bigImgArray[this.state.imgCounter] + ' img1'} alt='900x500'></div>
+				   <div  ref="bigImg2" className={this.state.bigImgArray[this.state.random2] + ' img1'} alt='900x500'></div>
 					  <div id="mapHolder2" className={this.state.mapStyle}><div style = {style}  className="map-canvas2"></div></div>
 				
 					  <div className="textWrapper">
@@ -419,12 +396,12 @@ module.exports = React.createClass({
 			  	  	<div ref="begin" className="locateHolder">
 						<div >
 							<div className="locateWrapper" >
-								 <p style={pStyle}>Find the nearest Happy Hours Specials!</p>
-								<button onClick={this.hideMe} className="locateBtn">Locate Me</button>
+								 <p className="hometxt" >Find the nearest Happy Hour Specials in Austin,&nbsp;TX.</p>
+								<button onClick={this.hideMe} className="locateBtn">Search Now!</button>
 							</div>
 						</div>
 					</div>
-			  <div className="row icon-row">
+			  <div ref="icons" className="row icon-row">
 			  	<div onClick={this.prev} className="col-sm-2 mob-btn ">	
 			  	  	<span className="fa-stack fa-2x">	
 			  	 		<i className="fa fa-circle-thin fa-stack-2x"></i>			  			  

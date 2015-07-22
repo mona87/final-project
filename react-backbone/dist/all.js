@@ -33628,7 +33628,9 @@ module.exports = React.createClass({
 			bigImgArray: ['bigImg1', 'bigImg2', 'bigImg3', 'bigImg4', 'bigImg5', 'bigImg6', 'bigImg7', 'bigImg8', 'bigImg9', 'bigImg10'],
 			imgCounter: 0,
 			length: null,
-			hide: 'none'
+			hide: 'none',
+			random: 3,
+			random2: 4
 		};
 	},
 	handleSelect: function handleSelect(selectedIndex, selectedDirection) {
@@ -33641,16 +33643,9 @@ module.exports = React.createClass({
 		} else if (selectedDirection === 'next') {
 
 			self.state.counter++;
-
-			// }
-			// console.log(this.onSlideEnd);
-			// this.slideEnd(selectedIndex, selectedDirection)
 		} else if (selectedDirection === 'prev') {
 			this.state.counter--;
 		}
-		//
-		// console.log('counter ',this.state.counter )
-		// console.log('index',this.state.index )	  
 		this.setState({
 			index: selectedIndex,
 			direction: selectedDirection
@@ -33662,20 +33657,11 @@ module.exports = React.createClass({
 		console.log('count ', this.state.bigImgArray[this.state.imgCounter]);
 		if (this.state.index === 0) {
 			this.state.index = 1;
-			this.state.imgCounter++;
+			// this.state.imgCounter++
 			this.handleSelect(this.state.index, 'prev');
 		} else if (this.state.index === 1) {
 			this.state.index = 0;
 			this.handleSelect(this.state.index, 'prev');
-		}
-
-		if (this.state.imgCounter === 0) {
-
-			this.state.imgCounter = this.state.bigImgArray.length - 1;
-
-			console.log('update ', this.state.imgCounter);
-		} else {
-			this.state.imgCounter--;
 		}
 	},
 	next: function next() {
@@ -33698,20 +33684,9 @@ module.exports = React.createClass({
 			// 	 	self.state.imgCounter++;
 			// });
 		}
-
-		if (this.state.imgCounter >= this.state.bigImgArray.length - 1) {
-			// $(this.refs.bigImg.getDOMNode()).fadeIn('fast', function(){
-			// 	// self.state.imgCounter = 0;
-			// });
-			// $(this.refs.bigImg2.getDOMNode()).fadeIn('fast');
-			self.state.imgCounter = 0;
-		} else {
-			// $(this.refs.bigImg.getDOMNode()).fadeIn('fast', function(){
-			// 	self.state.imgCounter++;
-			// });
-			// $(this.refs.bigImg2.getDOMNode()).fadeIn('fast');
-			self.state.imgCounter++;
-		}
+	},
+	componentWillMount: function componentWillMount() {
+		this.random();
 	},
 	shouldComponentUpdate: function shouldComponentUpdate(props) {
 
@@ -33782,6 +33757,7 @@ module.exports = React.createClass({
 		// if($(this.refs.list.getDOMNode()).css('display') ==='block'){
 		// 	$(this.refs.list.getDOMNode()).css('display','none');
 		var self = this;
+
 		// }else{
 		// 		$(this.refs.list.getDOMNode()).css('display','block');
 		// }
@@ -33799,6 +33775,7 @@ module.exports = React.createClass({
 				$(self.refs.list.getDOMNode()).slideToggle('slow', function () {
 					$('.img1').show();
 					$('.mapStyle').hide();
+					// self.random();
 				});
 			});
 		}
@@ -33820,13 +33797,25 @@ module.exports = React.createClass({
 		this.state.markers = marker;
 		// console.log('lat ',this.state.lat, 'lng ', this.state.lng)
 	},
+	random: function random() {
+		var randomnumber = Math.floor(Math.random() * (4 - 0 + 1)) + 0;
+		var randomnumber2 = Math.floor(Math.random() * (9 - 5 + 1)) + 5;
+		this.setState({
+			random: randomnumber,
+			random2: randomnumber2
+		});
+		console.log('random ', this.state.random);
+		console.log('random2 ', this.state.random2);
+	},
 	map: function map(e) {
 		e.preventDefault();
 		var self = this;
+
 		if ($('.mapStyle').css('display') === 'none') {
 
 			$('.img1').fadeToggle('fast', function () {
 				$('.mapStyle').fadeIn('fast');
+				// self.random();
 				self.initialize();
 			});
 		} else {
@@ -33835,16 +33824,13 @@ module.exports = React.createClass({
 				$('.img1').fadeIn('fast');
 			});
 		}
-
-		// $('.mapStyle').show();
-		//  console.log('lat ', this.state.lat);
-		//   console.log('lng ', this.state.lng);
 	},
 	list: function list() {
 		$('.img1').show();
 		$('.mapStyle').hide();
 	},
 	hideMe: function hideMe() {
+		$(this.refs.icons.getDOMNode()).show();
 		$(this.refs.begin.getDOMNode()).fadeOut('fast');
 		this.setState({
 			hide: 'block'
@@ -33868,12 +33854,7 @@ module.exports = React.createClass({
 			padding: '0'
 		};
 		var counter = 0;
-		var pStyle = {
-			color: 'white',
-			fontSize: '20px',
-			textAlign: 'center',
-			margin: '30px 0 20px 0'
-		};
+
 		var hideCarousel = {
 			display: this.state.hide
 
@@ -33893,7 +33874,7 @@ module.exports = React.createClass({
 						React.createElement(
 							CarouselItem,
 							{ className: 'carouselItem item1' },
-							React.createElement('div', { ref: 'bigImg', className: this.state.bigImgArray[this.state.imgCounter] + ' img1' }),
+							React.createElement('div', { ref: 'bigImg', className: this.state.bigImgArray[this.state.random] + ' img1' }),
 							React.createElement(
 								'div',
 								{ id: 'mapHolder', className: this.state.mapStyle },
@@ -33954,7 +33935,7 @@ module.exports = React.createClass({
 						React.createElement(
 							CarouselItem,
 							{ className: 'carouselItem item2 ' },
-							React.createElement('div', { ref: 'bigImg2', className: this.state.bigImgArray[this.state.imgCounter] + ' img1', alt: '900x500' }),
+							React.createElement('div', { ref: 'bigImg2', className: this.state.bigImgArray[this.state.random2] + ' img1', alt: '900x500' }),
 							React.createElement(
 								'div',
 								{ id: 'mapHolder2', className: this.state.mapStyle },
@@ -34078,20 +34059,20 @@ module.exports = React.createClass({
 						{ className: 'locateWrapper' },
 						React.createElement(
 							'p',
-							{ style: pStyle },
-							'Find the nearest Happy Hours Specials!'
+							{ className: 'hometxt' },
+							'Find the nearest Happy Hour Specials in Austin, TX.'
 						),
 						React.createElement(
 							'button',
 							{ onClick: this.hideMe, className: 'locateBtn' },
-							'Locate Me'
+							'Search Now!'
 						)
 					)
 				)
 			),
 			React.createElement(
 				'div',
-				{ className: 'row icon-row' },
+				{ ref: 'icons', className: 'row icon-row' },
 				React.createElement(
 					'div',
 					{ onClick: this.prev, className: 'col-sm-2 mob-btn ' },
@@ -34237,7 +34218,7 @@ module.exports = React.createClass({
 					React.createElement(
 						'p',
 						{ style: pStyle },
-						'Find the nearest Happy Hours Specials!'
+						'Find the nearest Happy Hours Specials in Austin Tx!'
 					),
 					React.createElement(
 						'button',
@@ -34278,18 +34259,6 @@ module.exports = React.createClass({
 		});
 	}
 });
-/*<div className="col-sm-12">
-<form style={style} onSubmit={this.login}>
-<h1>Login</h1>
-<div style={red} ref="error"></div>
-<label>Username</label><br/>
-<input ref="username" type="text"/><br/>
-<label>Password</label><br/>
-<input ref="pass" type="password"/><br/>
-<br/>
-<button>Login</button>
-</form>
-</div>*/
 
 },{"backbone":1,"jquery":4,"react":168}],174:[function(require,module,exports){
 'use strict';
@@ -34510,20 +34479,19 @@ module.exports = React.createClass({
 						'Happy Hour'
 					),
 					React.createElement(
-						'span',
-						{ style: style, className: 'user', onClick: this.slide, className: 'user' },
-						'Welcome ',
-						this.state.username,
-						'!'
-					)
-				),
-				React.createElement(
-					'div',
-					{ className: 'row' },
+						'a',
+						{ className: 'mylinks', href: 'https://www.linkedin.com/pub/ramona-bellamy/bb/160/289' },
+						React.createElement('i', { className: 'fa fa-linkedin fa-2x' })
+					),
 					React.createElement(
-						'div',
-						{ className: 'col-sm-12' },
-						React.createElement('div', { ref: 'slider', className: 'slider' })
+						'a',
+						{ className: 'mylinks', href: 'https://twitter.com/mona_dev87' },
+						React.createElement('i', { className: 'fa fa-twitter fa-2x' })
+					),
+					React.createElement(
+						'a',
+						{ className: 'mylinks', href: 'https://github.com/mona87/my-final-project' },
+						React.createElement('i', { className: 'fa fa-github-alt fa-2x' })
 					)
 				)
 			)
