@@ -31,7 +31,9 @@ module.exports = React.createClass({
 			  length: null,
 			  hide: 'none',
 			  random: 3,
-			  random2: 4
+			  random2: 4,
+			  timer: 0, 
+			  interval: null
 			};
 		  },
 		  handleSelect: function(selectedIndex, selectedDirection) {
@@ -268,6 +270,24 @@ module.exports = React.createClass({
 		  		})
 		  			$('.carouselMain').fadeIn('slow');
 		  },
+		  componentDidMount: function(){
+				
+				this.state.interval = window.setInterval(this.timer, 1000);	
+				console.log('true');
+				
+		  },
+		  timer: function(){
+					this.state.timer+=3;
+					if(this.state.timer >= 30){
+						window.clearInterval(this.state.interval)
+						console.log('interval cleared');
+					}
+						this.setState({
+							timer: this.state.timer
+						})
+				
+					
+		  },
 		  render: function() {
 		  	
 		  		// $('.carouselMain').css('display', this.state.hide)
@@ -316,7 +336,7 @@ module.exports = React.createClass({
 									
 								  return(
 							  
-									  	<div key={place._id}>						
+									  	<div key={place._id}>					
 									  		<i id={place._id+ 'heart'} className="fa fa-heart fa-2x "></i>					  		
 										  	<h1 className="rest-name">{place.restaurant}</h1>				  
 											<div className="details">{place.details}</div>

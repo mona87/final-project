@@ -33630,7 +33630,9 @@ module.exports = React.createClass({
 			length: null,
 			hide: 'none',
 			random: 3,
-			random2: 4
+			random2: 4,
+			timer: 0,
+			interval: null
 		};
 	},
 	handleSelect: function handleSelect(selectedIndex, selectedDirection) {
@@ -33836,6 +33838,21 @@ module.exports = React.createClass({
 			hide: 'block'
 		});
 		$('.carouselMain').fadeIn('slow');
+	},
+	componentDidMount: function componentDidMount() {
+
+		this.state.interval = window.setInterval(this.timer, 1000);
+		console.log('true');
+	},
+	timer: function timer() {
+		this.state.timer += 3;
+		if (this.state.timer >= 30) {
+			window.clearInterval(this.state.interval);
+			console.log('interval cleared');
+		}
+		this.setState({
+			timer: this.state.timer
+		});
 	},
 	render: function render() {
 
@@ -34296,7 +34313,7 @@ module.exports = React.createClass({
 	rad: function rad(x) {
 		return x * Math.PI / 180;
 	},
-	distance: function distance(p1Lat, p1Long, p2Lat, p2Long, place, counter) {
+	distance: function distance(p1Lat, p1Long, p2Lat, p2Long, place, counter, that) {
 		var origin1 = new google.maps.LatLng(p1Lat, p1Long);
 		var destinationA = new google.maps.LatLng(p2Lat, p2Long);
 		var service = new google.maps.DistanceMatrixService();
@@ -34322,23 +34339,24 @@ module.exports = React.createClass({
 					place.distance = response.rows[0].elements[0].distance.text + 'les';
 					place.duration = response.rows[0].elements[0].duration.text + ' away';
 					var num = parseFloat(place.distance);
+					// addRender(place);
 					if (num < 5) {
-						addRender(place);
+						addRender(place, that);
 					}
 				}
 			}
-			if (counter === place.arrayLength - 1) {}
 
 			// console.log(response.rows[0].elements[0].distance.text)
 		});
 
-		function addRender(place) {
+		function addRender(place, that) {
 
 			self.state.nearby.push(place);
+
 			// console.log(self.state.nearby);
 			// self.render(self.state.nearby)
 
-			self.check(self.state.nearby);
+			self.check(self.state.nearby, that);
 		}
 
 		// var num = google.maps.geometry.spherical.computeDistanceBetween(origin1, destinationA);
@@ -34352,7 +34370,7 @@ module.exports = React.createClass({
 		// return num
 	},
 
-	check: function check(places) {
+	check: function check(places, that) {
 		if (places !== undefined) {
 			this.state.nearby = places;
 		}
@@ -34386,7 +34404,7 @@ module.exports = React.createClass({
 			place.index = i;
 			place.arrayLength = self.state.places.length;
 
-			if (self.distance(self.props.lat, self.props.lng, place.latitude, place.longitude, place, i) <= 4) {
+			if (self.distance(self.props.lat, self.props.lng, place.latitude, place.longitude, place, i, self) <= 4) {
 				self.state.nearby.push(place);
 			}
 			//
@@ -34399,11 +34417,11 @@ module.exports = React.createClass({
 	},
 	render: function render(places) {
 		// console.log(places)
+		this.nearbyPlaces();
 		self = this;
 		var style = {
 			color: 'blue'
 		};
-		this.nearbyPlaces();
 
 		// console.log('dis ' +this.haversine(30.26654,-97.738194, this.state.lat, this.state.lng));
 		// this.nearbyPlaces();
@@ -34417,7 +34435,6 @@ module.exports = React.createClass({
 			React.createElement(CarouselComponent, { callback: this.nearbyPlaces, lat: this.props.lat, lng: this.props.lng, router: this.props.router, places: this.state.places, nearby: this.state.nearby, counter: 0, haversine: this.haversine })
 		);
 	},
-	componentDidUpdate: function componentDidUpdate() {},
 	fetchData: function fetchData() {
 		self = this;
 		restaurants.fetch({

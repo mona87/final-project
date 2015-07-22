@@ -103,6 +103,10 @@ body{
 	/*height: 75px;*/
 }
 
+.loading{
+	font-style: italic;
+	color: #75A267;
+}
 
 .hometxt{
 	color: #21161F;
@@ -304,10 +308,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', end
 
 .header >h1{
 
-	font-size: 30px;
+	font-size: 25px;
 	/*margin-left: 50px;*/
 	margin: 0px auto auto auto;
-	padding-top: 7px;
+	padding-top: 10px;
 	text-align: left;
 	float: left;
 	/*float:left;*/
@@ -383,7 +387,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', end
 
 	/*border-right: 1px solid white; 
 	border-left: 1px solid white; */
-	width: 33%;
+	width: 33.33%;
 	/*margin: 0 auto;*/
 	cursor: pointer;
 	float: left;
@@ -727,6 +731,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', end
 		position: absolute;
 		bottom: 10px;
 		right: 75px;
+		margin-bottom: 0;
 		
 	}
 	.locateHolder{
@@ -745,6 +750,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', end
 		margin-right: 20px;
 		margin-top: 10px;
 		font-size: 30px;
-}
+	}
 
 }
