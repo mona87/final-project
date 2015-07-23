@@ -27,6 +27,6 @@ longitude: number, null, required
 ```
 
 ##APIs, Plugins, Libraries and Frameworks
-<strong>Frameworks:</strong> React.js, Backbone.js, Bootstrap, MongoDB, Mongoose, Express,Node  <br/>
+<strong>Frameworks:</strong> React, Backbone, Bootstrap, MongoDB, Mongoose, Express, Node  <br/>
 <strong>Libraries</strong>: jQuery, Font-Awesome<br/>
 <strong>APIs:</strong> Google Maps
