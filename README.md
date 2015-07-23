@@ -12,20 +12,8 @@ My Trello board: <br/>
 https://trello.com/b/1m3Xivfq/happy-hour-final-project
 
 ##Models
-####User Model
-User Model has a a many-to-many relationship with the restaurant model<br/>
-```
-name: string, null, required,
-password: string, null, required,
-email: string, null, required,
-userId: string, null, required,
-createdAt: number, Date.Now(), required
-latitude: number, null, required
-longitude: number, null, required
-favoriteList: array, null 
-```
+
 ####Restaurant Model
-The Restaurant Model has a many-to-many relationship to the User Model
 ```
 name: string, null, required
 id: string, null, required
@@ -37,9 +25,8 @@ address: string, null, required
 latitude: number, null, required
 longitude: number, null, required
 ```
-Validation will be needed for login and sign-up
 
 ##APIs, Plugins, Libraries and Frameworks
-<strong>Frameworks:</strong> React.js, Backbone.js, Bootstrap, Cordova? <br/>
-<strong>Libraries</strong>: jQuery, Validator.js <br/>
-<strong>APIs:</strong> Google Maps, Parse
+<strong>Frameworks:</strong> React.js, Backbone.js, Bootstrap, MongoDB, Mongoose, Express,Node  <br/>
+<strong>Libraries</strong>: jQuery, Font-Awesome<br/>
+<strong>APIs:</strong> Google Maps
